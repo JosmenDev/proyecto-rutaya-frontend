@@ -13,13 +13,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // HOT RELOAD -> ejecuta
-  // HOT RESTART +> actualiza
-  // FULL RESTART -> corta la ejecucion
-
-  // Instanciar Loginbloc
-  // LoginBloc? _bloc;
-
   @override
   Widget build(BuildContext context) {
     // _bloc = BlocProvider.of<LoginBloc>(context);

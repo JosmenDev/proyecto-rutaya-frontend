@@ -41,8 +41,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     });
 
     on<FormSubmit>((event, emit) {
-      print('Email: ${state.email}');
-      print('Password: ${state.password}');
+      print('Email: ${state.email.value}');
+      print('Password: ${state.password.value}');
     });
   }
 }
