@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/AuthService.dart';
+import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginState.dart';
 import 'package:indriver_clone_flutter/src/presentation/utils/blocFormItem.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final formKey = GlobalKey<FormState>();
+  AuthService authService = AuthService();
   LoginBloc() : super(LoginState()) {
     // aqui, ya podemos registrar los eventos
     on<LoginInitEvent>((event, emit) {
@@ -40,9 +43,22 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       ));
     });
 
-    on<FormSubmit>((event, emit) {
+    on<FormSubmit>((event, emit) async {
       print('Email: ${state.email.value}');
       print('Password: ${state.password.value}');
+      // PRimera respuesta al recibir los datos
+      emit(state.copyWith(
+        response: Loading(),
+        formKey: formKey,
+      ));
+
+      Resource response =
+          await authService.login(state.email.value, state.password.value);
+      // Respuesta que puede ser success o error
+      emit(state.copyWith(
+        response: response,
+        formKey: formKey,
+      ));
     });
   }
 }
