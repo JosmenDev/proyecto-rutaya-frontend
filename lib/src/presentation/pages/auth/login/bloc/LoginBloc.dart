@@ -1,21 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/AuthService.dart';
+import 'package:indriver_clone_flutter/src/domain/models/AuthResponse.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginState.dart';
 import 'package:indriver_clone_flutter/src/presentation/utils/blocFormItem.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  AuthUseCases authUseCases;
   final formKey = GlobalKey<FormState>();
-  AuthService authService = AuthService();
-  LoginBloc() : super(LoginState()) {
+
+  LoginBloc(this.authUseCases) : super(LoginState()) {
     // aqui, ya podemos registrar los eventos
-    on<LoginInitEvent>((event, emit) {
+    on<LoginInitEvent>((event, emit) async {
+      AuthResponse? authResponse = await authUseCases.getUserSession.run();
+      print('Auth ResponseSession: ${authResponse?.toJson()}');
       // Dentro de este evento, vamos a emitir un cambio de estado
       emit(state.copyWith(formKey: formKey));
       // emit llama a state y con esto puedo acceder a todos los atributos o parametros
       // Agrego copyWith para cambiar los valores
+      if (authResponse != null) {
+        // si el usuario ya inicio sesion
+        emit(state.copyWith(
+          response: Success(authResponse),
+          formKey: formKey,
+        ));
+      }
     });
 
     on<EmailChanged>((event, emit) {
@@ -43,6 +54,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       ));
     });
 
+    on<SaveUserSession>((event, submit) async {
+      await authUseCases.saveUserSession.run(event.authResponse);
+    });
+
     on<FormSubmit>((event, emit) async {
       print('Email: ${state.email.value}');
       print('Password: ${state.password.value}');
@@ -53,7 +68,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       ));
 
       Resource response =
-          await authService.login(state.email.value, state.password.value);
+          await authUseCases.login.run(state.email.value, state.password.value);
       // Respuesta que puede ser success o error
       emit(state.copyWith(
         response: response,

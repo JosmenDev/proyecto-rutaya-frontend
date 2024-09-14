@@ -1,28 +1,28 @@
 import 'package:indriver_clone_flutter/src/domain/models/Role.dart';
 
 class User {
-  int id;
+  int? id;
   String name;
   String phone;
   String email;
-  dynamic image;
-  dynamic notificationToken;
-  DateTime createdAt;
-  DateTime updatedAt;
-  bool isActive;
-  List<Role> roles;
+  String? password;
+  String? image;
+  dynamic? notificationToken;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  List<Role>? roles;
 
   User({
-    required this.id,
+    this.id,
     required this.name,
     required this.phone,
     required this.email,
-    required this.image,
-    required this.notificationToken,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.isActive,
-    required this.roles,
+    this.password,
+    this.image,
+    this.notificationToken,
+    this.createdAt,
+    this.updatedAt,
+    this.roles,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -30,11 +30,9 @@ class User {
         name: json["name"],
         phone: json["phone"],
         email: json["email"],
+        password: json["password"],
         image: json["image"],
         notificationToken: json["notification_token"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        isActive: json["isActive"],
         roles: List<Role>.from(json["roles"].map((x) => Role.fromJson(x))),
       );
 
@@ -43,11 +41,11 @@ class User {
         "name": name,
         "phone": phone,
         "email": email,
+        "password": password,
         "image": image,
         "notification_token": notificationToken,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-        "isActive": isActive,
-        "roles": List<dynamic>.from(roles.map((x) => x.toJson())),
+        "roles": roles != null
+            ? List<dynamic>.from(roles!.map((x) => x.toJson()))
+            : [],
       };
 }

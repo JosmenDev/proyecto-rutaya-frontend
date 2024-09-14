@@ -9,6 +9,7 @@ import 'package:indriver_clone_flutter/src/presentation/widgets/Backbutton.dart'
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultButton.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultInput.dart';
 
+// ignore: must_be_immutable
 class RegisterContent extends StatelessWidget {
   RegisterState state;
 
@@ -98,13 +99,14 @@ class RegisterContent extends StatelessWidget {
                       obscureText: true,
                     ),
                     Defaultbutton(
+                        size: size,
                         onPressed: () {
                           if (state.formKey!.currentState!.validate()) {
                             context.read<RegisterBloc>().add(FormSubmit());
-                            context.read<RegisterBloc>().add(FormReset());
+                          } else {
+                            print('Formulario no válido');
                           }
                         },
-                        size: size,
                         color: celeste,
                         direction: 'login',
                         text: 'Crear Usuario')
