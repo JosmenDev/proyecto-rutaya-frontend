@@ -9,6 +9,7 @@ class DefaultInput extends StatelessWidget {
   String text;
   TextInputType type;
   bool obscureText;
+  String? initialValue;
 
   DefaultInput({
     required this.onChanged,
@@ -18,6 +19,7 @@ class DefaultInput extends StatelessWidget {
     required this.text,
     required this.type,
     this.obscureText = false,
+    this.initialValue,
   });
 
   @override
@@ -31,6 +33,7 @@ class DefaultInput extends StatelessWidget {
         onChanged: (text) {
           onChanged(text);
         },
+        initialValue: initialValue,
         validator: validator,
         keyboardType: type,
         obscureText: obscureText,
