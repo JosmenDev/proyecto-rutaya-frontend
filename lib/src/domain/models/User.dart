@@ -4,7 +4,7 @@ class User {
   int? id;
   String name;
   String phone;
-  String email;
+  String? email;
   String? password;
   String? image;
   dynamic? notificationToken;
@@ -16,7 +16,7 @@ class User {
     this.id,
     required this.name,
     required this.phone,
-    required this.email,
+    this.email,
     this.password,
     this.image,
     this.notificationToken,
@@ -33,7 +33,9 @@ class User {
         password: json["password"],
         image: json["image"],
         notificationToken: json["notification_token"],
-        roles: List<Role>.from(json["roles"].map((x) => Role.fromJson(x))),
+        roles: json["roles"] != null
+            ? List<Role>.from(json["roles"].map((x) => Role.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {

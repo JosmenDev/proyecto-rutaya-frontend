@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:indriver_clone_flutter/injection.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/users/UsersUseCases.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/register/bloc/RegisterBloc.dart';
@@ -22,5 +23,7 @@ List<BlocProvider> blocProviders = [
   BlocProvider<ProfileInfoBloc>(
       create: (context) =>
           ProfileInfoBloc(locator<AuthUseCases>())..add(GetUserInfo())),
-  BlocProvider<ProfileUpdateBloc>(create: (context) => ProfileUpdateBloc()),
+  BlocProvider<ProfileUpdateBloc>(
+      create: (context) =>
+          ProfileUpdateBloc(locator<UsersUseCases>(), locator<AuthUseCases>())),
 ];

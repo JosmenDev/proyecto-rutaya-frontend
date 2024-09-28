@@ -18,4 +18,9 @@ class PhoneChanged extends ProfileUpdateEvent {
   PhoneChanged({required this.phone});
 }
 
+class UpdateUserSession extends ProfileUpdateEvent {
+  final User user;
+  UpdateUserSession({required this.user});
+}
+
 class FormSubmit extends ProfileUpdateEvent {}

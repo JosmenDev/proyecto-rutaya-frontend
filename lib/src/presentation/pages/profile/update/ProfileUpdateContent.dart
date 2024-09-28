@@ -18,30 +18,33 @@ class ProfileUpdateContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Column(
-          children: [
-            _headerProfile(context),
-            Spacer(),
-            _actionProfile(context, 'ACTUALIZAR USUARIO', Icons.check, state),
-            SizedBox(
-              height: 35,
-            )
-          ],
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 40),
-          // Pasamos el user al widget _cardUserInfo
-          child: _cardUserInfo(context, user, state),
-        ),
-        DefaultIconBack(
-          margin: EdgeInsets.only(
-            top: 60,
-            left: 30,
+    return Form(
+      key: state.formkey,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              _headerProfile(context),
+              Spacer(),
+              _actionProfile(context, 'ACTUALIZAR USUARIO', Icons.check, state),
+              SizedBox(
+                height: 35,
+              )
+            ],
           ),
-        )
-      ],
+          Container(
+            margin: EdgeInsets.only(top: 40),
+            // Pasamos el user al widget _cardUserInfo
+            child: _cardUserInfo(context, user, state),
+          ),
+          DefaultIconBack(
+            margin: EdgeInsets.only(
+              top: 60,
+              left: 30,
+            ),
+          )
+        ],
+      ),
     );
   }
 }
