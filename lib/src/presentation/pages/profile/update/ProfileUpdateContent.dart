@@ -5,6 +5,7 @@ import 'package:indriver_clone_flutter/src/presentation/colors/colors.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/update/bloc/ProfileUpdateBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/update/bloc/ProfileUpdateEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/update/bloc/ProfileUpdateState.dart';
+import 'package:indriver_clone_flutter/src/presentation/utils/GalleryOrPhotoDialog.dart';
 import 'package:indriver_clone_flutter/src/presentation/utils/blocFormItem.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultIconBack.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultInput.dart';
@@ -50,6 +51,7 @@ class ProfileUpdateContent extends StatelessWidget {
 }
 
 // Modifica _cardUserInfo para aceptar el parámetro user
+// Modifica _cardUserInfo para aceptar el parámetro user y state
 Widget _cardUserInfo(
     BuildContext context, User? user, ProfileUpdateState state) {
   final size = MediaQuery.of(context).size;
@@ -62,22 +64,7 @@ Widget _cardUserInfo(
       surfaceTintColor: Colors.white,
       child: Column(
         children: [
-          Container(
-            width: 115,
-            margin: EdgeInsets.only(top: 15, bottom: 15),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: ClipOval(
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'assets/img/user-image.png',
-                  image:
-                      'https://www.bnl.gov/today/body_pics/2017/06/StephanHruszkewycz-hr.jpg',
-                  fit: BoxFit.cover,
-                  fadeInDuration: Duration(seconds: 1),
-                ),
-              ),
-            ),
-          ),
+          _imageUser(context, user, state), // Pasa el state aquí
           SizedBox(height: size.height * 0.02),
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -119,6 +106,55 @@ Widget _cardUserInfo(
             ),
           ),
         ],
+      ),
+    ),
+  );
+}
+
+// Ahora pasa el state a _imageUser y úsalo para verificar la imagen
+Widget _imageUser(BuildContext context, User? user, ProfileUpdateState state) {
+  return GestureDetector(
+    onTap: () {
+      GalleryOrPhotoDialog(
+        context,
+        () => context.read<ProfileUpdateBloc>().add(PickImage()),
+        () => context.read<ProfileUpdateBloc>().add(TakePhoto()),
+      );
+    },
+    child: Container(
+      width: 115,
+      margin: EdgeInsets.only(top: 15, bottom: 15),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: ClipOval(
+          child: state.image != null
+              ? Image.file(
+                  state.image!,
+                  fit: BoxFit.cover,
+                )
+              : (user?.image != null && user!.image!.isNotEmpty)
+                  ? Image.network(
+                      user!.image!,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    (loadingProgress.expectedTotalBytes ?? 1)
+                                : null,
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset('assets/img/user-image.png',
+                            fit: BoxFit.cover);
+                      },
+                    )
+                  : Image.asset('assets/img/user-image.png', fit: BoxFit.cover),
+        ),
       ),
     ),
   );

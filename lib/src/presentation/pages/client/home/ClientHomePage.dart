@@ -6,6 +6,7 @@ import 'package:indriver_clone_flutter/src/presentation/colors/colors.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/home/bloc/ClientHomeBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/home/bloc/ClientHomeEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/home/bloc/ClientHomeState.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/ClientMapSeekerPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/info/ProfileInfoPage.dart';
 
 class ClientHomePage extends StatefulWidget {
@@ -17,6 +18,7 @@ class ClientHomePage extends StatefulWidget {
 
 class _ClientHomePageState extends State<ClientHomePage> {
   List<Widget> pageList = <Widget>[
+    ClientMapSeekerPage(),
     ProfileInfoPage(),
   ];
   @override
@@ -83,12 +85,22 @@ class _ClientHomePageState extends State<ClientHomePage> {
                   ),
                 ),
                 ListTile(
-                  title: Text('Perfil de Usuario'),
+                  title: Text('Mapa de Búsqueda'),
                   selected: state.pageIndex == 0,
                   onTap: () {
                     context
                         .read<ClientHomeBloc>()
                         .add(ChangeDrawePage(pageIndex: 0));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Perfil de Usuario'),
+                  selected: state.pageIndex == 1,
+                  onTap: () {
+                    context
+                        .read<ClientHomeBloc>()
+                        .add(ChangeDrawePage(pageIndex: 1));
                     Navigator.pop(context);
                   },
                 ),

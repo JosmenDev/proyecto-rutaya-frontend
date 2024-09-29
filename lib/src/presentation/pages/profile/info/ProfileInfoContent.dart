@@ -46,13 +46,17 @@ Widget _cardUserInfo(BuildContext context, User? user) {
             child: AspectRatio(
               aspectRatio: 1,
               child: ClipOval(
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'assets/img/user-image.png',
-                  image:
-                      'https://www.bnl.gov/today/body_pics/2017/06/StephanHruszkewycz-hr.jpg',
-                  fit: BoxFit.cover,
-                  fadeInDuration: Duration(seconds: 1),
-                ),
+                child: user != null && user!.image!.isNotEmpty
+                    ? FadeInImage.assetNetwork(
+                        placeholder: 'assets/img/user-image.png',
+                        image: user!.image!, // Usar la imagen del usuario
+                        fit: BoxFit.cover,
+                        fadeInDuration: Duration(seconds: 1),
+                      )
+                    : Image.asset(
+                        'assets/img/user-image.png',
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
           ),

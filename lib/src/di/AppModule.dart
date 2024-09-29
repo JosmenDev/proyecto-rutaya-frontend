@@ -2,9 +2,11 @@ import 'package:indriver_clone_flutter/src/data/dataSource/local/SharefPref.dart
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/AuthService.dart';
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/UsersService.dart';
 import 'package:indriver_clone_flutter/src/data/repository/AuthRepositoryImpl.dart';
+import 'package:indriver_clone_flutter/src/data/repository/GeolocatorRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/data/repository/UsersRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/domain/models/AuthResponse.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/AuthRepository.dart';
+import 'package:indriver_clone_flutter/src/domain/repository/GeolocatorRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/UsersRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/LoginUseCase.dart';
@@ -12,6 +14,8 @@ import 'package:indriver_clone_flutter/src/domain/useCases/auth/LogoutUseCase.da
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/RegisterUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/SaveUserSessionUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/getUserSessionUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/FindPositionUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GeolocatorUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UpdateUserUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UsersUseCases.dart';
 import 'package:injectable/injectable.dart';
@@ -48,6 +52,9 @@ abstract class AppModule {
   UsersRepository get usersRepository => UsersRepositoryImpl(usersService);
 
   @injectable
+  GeolocatorRepository get geoLocatorRepository => GeolocatorRepositoryImpl();
+
+  @injectable
   AuthUseCases get authUseCases => AuthUseCases(
         login: LoginUseCase(authRepository),
         register: RegisterUseCase(authRepository),
@@ -59,4 +66,9 @@ abstract class AppModule {
   @injectable
   UsersUseCases get usersUseCases =>
       UsersUseCases(update: UpdateUserUseCase(usersRepository));
+
+  @injectable
+  GeolocatorUseCases get geolocatorUseCases => GeolocatorUseCases(
+        findPosition: FindPositionUseCase(geoLocatorRepository),
+      );
 }
