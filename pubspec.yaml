@@ -43,6 +43,11 @@ dependencies:
   http_parser: ^4.0.2
   google_maps_flutter: ^2.9.0
   geolocator: ^13.0.1
+  google_places_autocomplete_text_field: ^0.1.3
+  geocoding: ^3.0.0
+  flutter_polyline_points: ^2.1.0
+  flutter_native_splash: ^2.2.17
+  
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -61,8 +66,17 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
+flutter_native_splash:
+  color: "#0CC0DF" # Color de fondo del splash screen
+  image: assets/img/logo_inicio_xl.png # Ruta a la imagen
+  android: true
+  ios: true
+#   android: true
+#   ios: true
+#   android_gravity: fill # Ajusta cómo se centra la imagen en Android
+#   ios_content_mode: scaleAspectFill # Ajusta cómo se escala la imagen en iOS
+# # For information on the generic Dart part of this file, see the
+# # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:

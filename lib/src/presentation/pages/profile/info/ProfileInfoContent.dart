@@ -46,17 +46,19 @@ Widget _cardUserInfo(BuildContext context, User? user) {
             child: AspectRatio(
               aspectRatio: 1,
               child: ClipOval(
-                child: user != null && user!.image!.isNotEmpty
-                    ? FadeInImage.assetNetwork(
-                        placeholder: 'assets/img/user-image.png',
-                        image: user!.image!, // Usar la imagen del usuario
-                        fit: BoxFit.cover,
-                        fadeInDuration: Duration(seconds: 1),
-                      )
-                    : Image.asset(
-                        'assets/img/user-image.png',
-                        fit: BoxFit.cover,
-                      ),
+                child:
+                    user != null && user.image != null && user.image!.isNotEmpty
+                        ? FadeInImage.assetNetwork(
+                            placeholder:
+                                'assets/img/user-image.png', // Imagen predeterminada
+                            image: user.image!,
+                            fit: BoxFit.cover,
+                            fadeInDuration: Duration(seconds: 1),
+                          )
+                        : Image.asset(
+                            'assets/img/user-image.png', // Imagen predeterminada si no hay imagen
+                            fit: BoxFit.cover,
+                          ),
               ),
             ),
           ),

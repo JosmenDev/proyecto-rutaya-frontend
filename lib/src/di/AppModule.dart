@@ -1,11 +1,14 @@
 import 'package:indriver_clone_flutter/src/data/dataSource/local/SharefPref.dart';
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/AuthService.dart';
+import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/ClientRequestService.dart';
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/UsersService.dart';
 import 'package:indriver_clone_flutter/src/data/repository/AuthRepositoryImpl.dart';
+import 'package:indriver_clone_flutter/src/data/repository/ClienteRequestRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/data/repository/GeolocatorRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/data/repository/UsersRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/domain/models/AuthResponse.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/AuthRepository.dart';
+import 'package:indriver_clone_flutter/src/domain/repository/ClientRequestRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/GeolocatorRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/UsersRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart';
@@ -14,8 +17,14 @@ import 'package:indriver_clone_flutter/src/domain/useCases/auth/LogoutUseCase.da
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/RegisterUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/SaveUserSessionUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/getUserSessionUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/ClientRequestUseCases.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/getTimeAndDistanceUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/CreateMarketUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/FindPositionUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GeolocatorUseCases.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetMarkerUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetPlacemarkDataUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetPolylineUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UpdateUserUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UsersUseCases.dart';
 import 'package:injectable/injectable.dart';
@@ -49,10 +58,17 @@ abstract class AppModule {
       AuthRepositoryImpl(authService, sharefPref);
 
   @injectable
+  ClientRequestService get clientRequestService => ClientRequestService();
+
+  @injectable
   UsersRepository get usersRepository => UsersRepositoryImpl(usersService);
 
   @injectable
   GeolocatorRepository get geoLocatorRepository => GeolocatorRepositoryImpl();
+
+  @injectable
+  ClientRequestRepository get clientRequestRepository =>
+      ClienteRequestRepositoryImpl(clientRequestService);
 
   @injectable
   AuthUseCases get authUseCases => AuthUseCases(
@@ -70,5 +86,14 @@ abstract class AppModule {
   @injectable
   GeolocatorUseCases get geolocatorUseCases => GeolocatorUseCases(
         findPosition: FindPositionUseCase(geoLocatorRepository),
+        createMarket: CreateMarketUseCase(geoLocatorRepository),
+        getMarker: GetMarkerUseCase(geoLocatorRepository),
+        getPlacemarkData: GetPlacemarkDataUseCase(geoLocatorRepository),
+        getPolyLine: GetPolyLineUseCase(geoLocatorRepository),
+      );
+
+  @injectable
+  ClientRequestUseCases get clientRequestUseCases => ClientRequestUseCases(
+        getTimeAndDistance: GetTimeAndDistanceUseCase(clientRequestRepository),
       );
 }

@@ -38,12 +38,13 @@ class ProfileUpdateContent extends StatelessWidget {
             // Pasamos el user al widget _cardUserInfo
             child: _cardUserInfo(context, user, state),
           ),
-          DefaultIconBack(
-            margin: EdgeInsets.only(
-              top: 60,
-              left: 30,
+          Positioned(
+            top: 40,
+            left: 20,
+            child: DefaultIconBack(
+              color: Colors.white, // Cambiar color para verificar visibilidad
             ),
-          )
+          ),
         ],
       ),
     );

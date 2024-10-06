@@ -6,7 +6,9 @@ import 'package:indriver_clone_flutter/injection.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/LoginPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/register/RegisterPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/home/ClientHomePage.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingInfo/ClientMapBookingInfoPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/update/ProfileUpdatePage.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,12 +33,15 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          initialRoute: 'login',
+          initialRoute: '/',
           routes: {
+            '/': (context) => SplashScreen(),
             'login': (BuildContext context) => LoginPage(),
             'register': (BuildContext context) => RegisterPage(),
             'client/home': (BuildContext context) => ClientHomePage(),
             'profile/update': (BuildContext context) => ProfileUpdatePage(),
+            'client/map/booking': (BuildContext context) =>
+                ClientMapBookingInfoPage()
           }),
     );
   }
