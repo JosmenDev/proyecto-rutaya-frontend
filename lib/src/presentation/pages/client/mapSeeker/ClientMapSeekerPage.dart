@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:google_places_autocomplete_text_field/google_places_autocomplete_text_field.dart';
 import 'package:google_places_autocomplete_text_field/model/prediction.dart';
+import 'package:indriver_clone_flutter/src/data/api/ApiKeyGoogle.dart';
 import 'package:indriver_clone_flutter/src/presentation/colors/colors.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/bloc/ClientMapSeekerBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/bloc/ClientMapSeekerEvent.dart';
@@ -44,7 +45,6 @@ class _ClientMapSeekerPageState extends State<ClientMapSeekerPage> {
     });
   }
 
-  final _yourGoogleAPIKey = 'AIzaSyACpdZ7tDxDAyeyW7ocOBD9bwcwJ1AHyJw';
   // only needed if you build for the web
   // final _yourProxyURL = 'https://your-proxy.com/';
 
@@ -179,7 +179,7 @@ class _ClientMapSeekerPageState extends State<ClientMapSeekerPage> {
                       // print('Lugar de recogida Lat: ${prediction.lat}');
                       // print('Lugar de recogida Lng: ${prediction.lng}');
                     },
-                    _yourGoogleAPIKey,
+                    API_KEY_GOOGLE,
                   ),
                   SizedBox(height: 10),
                   GooglePlacesAutoComplete(
@@ -199,7 +199,7 @@ class _ClientMapSeekerPageState extends State<ClientMapSeekerPage> {
                       // print('Lugar de Destino Lat: ${prediction.lat}');
                       // print('Lugar de Destino Lng: ${prediction.lng}');
                     },
-                    _yourGoogleAPIKey,
+                    API_KEY_GOOGLE,
                   ),
                 ],
               ),

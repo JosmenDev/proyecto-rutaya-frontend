@@ -32,6 +32,7 @@ lib/src/data/api/*.dart
 .pub-cache/
 .pub/
 /build/
+ios/Runner/AppDelegate.swift
 
 # Symbolication related
 app.*.symbols
