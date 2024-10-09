@@ -3,6 +3,7 @@ import 'package:indriver_clone_flutter/injection.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/ClientRequestUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GeolocatorUseCases.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/routes-suggested/RoutesUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UsersUseCases.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginEvent.dart';
@@ -10,9 +11,10 @@ import 'package:indriver_clone_flutter/src/presentation/pages/auth/register/bloc
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/register/bloc/RegisterEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/home/bloc/ClientHomeBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingInfo/bloc/ClientMapBookingInfoBloc.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingInfo/bloc/ClientMapBookingInfoEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/bloc/ClientMapSeekerBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/bloc/ClientMapSeekerEvent.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesBloc.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/info/bloc/ProfileInfoBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/info/bloc/ProfileInfoEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/update/bloc/ProfileUpdateBloc.dart';
@@ -37,5 +39,10 @@ List<BlocProvider> blocProviders = [
         ..add(ClientMapSeekerInitEvent())),
   BlocProvider<ClientMapBookingInfoBloc>(
       create: (context) => ClientMapBookingInfoBloc(
-          locator<GeolocatorUseCases>(), locator<ClientRequestUseCases>())),
+          locator<GeolocatorUseCases>(),
+          locator<ClientRequestUseCases>(),
+          locator<AuthUseCases>())),
+  BlocProvider<RoutesBloc>(
+    create: (context) => RoutesBloc(locator<RoutesUseCases>()),
+  ),
 ];

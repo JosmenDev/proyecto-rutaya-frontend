@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:indriver_clone_flutter/src/domain/models/TimeAndDistanceValues.dart';
 import 'package:indriver_clone_flutter/src/presentation/colors/colors.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingInfo/bloc/ClientMapBookingInfoBloc.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingInfo/bloc/ClientMapBookingInfoEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingInfo/bloc/ClientMapBookingInfoState.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultButton.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultIconBack.dart';
@@ -9,8 +11,10 @@ import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultIconBack.
 class ClientMapBookingInfoContent extends StatelessWidget {
   ClientMapBookingInfoState state;
   TimeAndDistanceValues timeAndDistanceValues;
+  final ClientMapBookingInfoBloc bloc;
 
-  ClientMapBookingInfoContent(this.state, this.timeAndDistanceValues);
+  ClientMapBookingInfoContent(
+      this.state, this.timeAndDistanceValues, this.bloc);
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +22,14 @@ class ClientMapBookingInfoContent extends StatelessWidget {
       children: [
         _GoogleMaps(context),
         Container(
-            alignment: Alignment.bottomCenter,
-            // margin: EdgeInsets.all(20),
-            child: _cardBookingInfo(context)),
+          alignment: Alignment.bottomCenter,
+          child: _cardBookingInfo(context),
+        ),
         Positioned(
           top: 40,
           left: 20,
           child: DefaultIconBack(
-            color: Colors.white, // Cambiar color para verificar visibilidad
+            color: Colors.white,
           ),
         ),
       ],
@@ -34,7 +38,8 @@ class ClientMapBookingInfoContent extends StatelessWidget {
 
   Widget _GoogleMaps(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.61,
+      height: MediaQuery.of(context).size.height *
+          0.55, // Ajustar altura para dejar más espacio
       child: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: state.cameraPosition,
@@ -43,7 +48,6 @@ class ClientMapBookingInfoContent extends StatelessWidget {
         onMapCreated: (GoogleMapController controller) {
           if (!state.controller.isCompleted) {
             state.controller.complete(controller);
-            // context.read<ClientMapSeekerBloc>().add(ClientMapSeekerInitEvent());
           }
         },
       ),
@@ -53,7 +57,8 @@ class ClientMapBookingInfoContent extends StatelessWidget {
   Widget _cardBookingInfo(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
-      height: MediaQuery.of(context).size.height * 0.42,
+      height: MediaQuery.of(context).size.height *
+          0.48, // Ajustar altura para dejar espacio
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -61,77 +66,91 @@ class ClientMapBookingInfoContent extends StatelessWidget {
           topRight: Radius.circular(30.0),
         ),
       ),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(
-              'Lugar de Origen ',
-              style: TextStyle(
-                fontSize: 15,
+      child: SingleChildScrollView(
+        // Envolver con SingleChildScrollView
+        child: Column(
+          children: [
+            ListTile(
+              title: Text(
+                'Lugar de Origen',
+                style: TextStyle(
+                  fontSize: 15,
+                ),
               ),
-            ),
-            subtitle: Text(
-              state.pickUpDescription,
-              style: TextStyle(
-                fontSize: 13,
+              subtitle: Text(
+                state.pickUpDescription,
+                style: TextStyle(
+                  fontSize: 13,
+                ),
               ),
+              leading: Icon(Icons.location_on),
             ),
-            leading: Icon(Icons.location_on),
-          ),
-          ListTile(
-            title: Text(
-              'Lugar de destino ',
-              style: TextStyle(
-                fontSize: 15,
+            ListTile(
+              title: Text(
+                'Lugar de destino',
+                style: TextStyle(
+                  fontSize: 15,
+                ),
               ),
-            ),
-            subtitle: Text(
-              state.destinationDescription,
-              style: TextStyle(
-                fontSize: 13,
+              subtitle: Text(
+                state.destinationDescription,
+                style: TextStyle(
+                  fontSize: 13,
+                ),
               ),
+              leading: Icon(Icons.my_location),
             ),
-            leading: Icon(Icons.my_location),
-          ),
-          ListTile(
-            title: Text(
-              'Tiempo Aproximado ',
-              style: TextStyle(
-                fontSize: 15,
+            ListTile(
+              title: Text(
+                'Tiempo Aproximado',
+                style: TextStyle(
+                  fontSize: 15,
+                ),
               ),
-            ),
-            subtitle: Text(
-              timeAndDistanceValues.duration.text,
-              style: TextStyle(
-                fontSize: 13,
+              subtitle: Text(
+                timeAndDistanceValues.duration.text,
+                style: TextStyle(
+                  fontSize: 13,
+                ),
               ),
+              leading: Icon(Icons.timer),
             ),
-            leading: Icon(Icons.timer),
-          ),
-          ListTile(
-            title: Text(
-              'Distancia Aproximada',
-              style: TextStyle(
-                fontSize: 15,
+            ListTile(
+              title: Text(
+                'Distancia Aproximada',
+                style: TextStyle(
+                  fontSize: 15,
+                ),
               ),
-            ),
-            subtitle: Text(
-              timeAndDistanceValues.distance.text,
-              style: TextStyle(
-                fontSize: 13,
+              subtitle: Text(
+                timeAndDistanceValues.distance.text,
+                style: TextStyle(
+                  fontSize: 13,
+                ),
               ),
+              leading: Icon(Icons.social_distance),
             ),
-            leading: Icon(Icons.social_distance),
-          ),
-          Defaultbutton(
-            size: MediaQuery.of(context).size,
-            onPressed: () {},
-            color: celeste, // Cambia el color según tus necesidades
-            direction:
-                'Submit', // Puede que este parámetro no sea necesario, ajústalo si es el caso
-            text: 'Buscar ruta',
-          ),
-        ],
+            Defaultbutton(
+              size: MediaQuery.of(context).size,
+              onPressed: () {
+                bloc.add(CreateClientRequest());
+                Navigator.pushNamed(
+                  context,
+                  'client/routes-suggested',
+                  arguments: {
+                    'pickUpLatLng': state.pickUpLatLng,
+                    'destinationLatLng': state.destinationLatLng,
+                    'pickUpDescription': state.pickUpDescription,
+                    'destinationDescription': state.destinationDescription,
+                  },
+                );
+              },
+              color: celeste,
+              direction: 'Submit',
+              text: 'Buscar ruta',
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:indriver_clone_flutter/src/domain/models/PlacemarkData.dart';
-import 'package:indriver_clone_flutter/src/domain/models/TimeAndDistanceValues.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
 
 class ClientMapBookingInfoState extends Equatable {
@@ -20,6 +18,8 @@ class ClientMapBookingInfoState extends Equatable {
   final String pickUpDescription;
   final String destinationDescription;
   final Resource? responseTimeAndDistance;
+  final Resource? responseClientRequest;
+  final bool isRequestSubmitted;
 
   ClientMapBookingInfoState({
     Completer<GoogleMapController>? controller,
@@ -34,20 +34,25 @@ class ClientMapBookingInfoState extends Equatable {
     this.pickUpDescription = '',
     this.destinationDescription = '',
     this.responseTimeAndDistance,
+    this.responseClientRequest,
+    this.isRequestSubmitted = false,
   }) : controller = controller ?? Completer<GoogleMapController>();
 
-  ClientMapBookingInfoState copyWith(
-      {Position? position,
-      Completer<GoogleMapController>? controller,
-      CameraPosition? cameraPosition,
-      Map<MarkerId, Marker>? markers,
-      Map<PolylineId, Polyline>? polylines,
-      bool? positionInitialized, // Añadir a copyWith
-      LatLng? pickUpLatLng,
-      LatLng? destinationLatLng,
-      String? pickUpDescription,
-      String? destinationDescription,
-      Resource? responseTimeAndDistance}) {
+  ClientMapBookingInfoState copyWith({
+    Position? position,
+    Completer<GoogleMapController>? controller,
+    CameraPosition? cameraPosition,
+    Map<MarkerId, Marker>? markers,
+    Map<PolylineId, Polyline>? polylines,
+    bool? positionInitialized, // Añadir a copyWith
+    LatLng? pickUpLatLng,
+    LatLng? destinationLatLng,
+    String? pickUpDescription,
+    String? destinationDescription,
+    Resource? responseTimeAndDistance,
+    Resource? responseClientRequest,
+    bool? isRequestSubmitted,
+  }) {
     return ClientMapBookingInfoState(
       position: position ?? this.position,
       markers: markers ?? this.markers,
@@ -63,6 +68,9 @@ class ClientMapBookingInfoState extends Equatable {
           destinationDescription ?? this.destinationDescription,
       responseTimeAndDistance:
           responseTimeAndDistance ?? this.responseTimeAndDistance,
+      responseClientRequest:
+          responseTimeAndDistance ?? this.responseClientRequest,
+      isRequestSubmitted: isRequestSubmitted ?? this.isRequestSubmitted,
     );
   }
 
@@ -79,5 +87,7 @@ class ClientMapBookingInfoState extends Equatable {
         pickUpDescription,
         destinationDescription,
         responseTimeAndDistance,
+        responseClientRequest,
+        isRequestSubmitted,
       ];
 }

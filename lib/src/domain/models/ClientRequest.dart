@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final clientRequest = clientRequestFromJson(jsonString);
-
 import 'dart:convert';
 
 ClientRequest clientRequestFromJson(String str) =>
@@ -10,7 +6,7 @@ ClientRequest clientRequestFromJson(String str) =>
 String clientRequestToJson(ClientRequest data) => json.encode(data.toJson());
 
 class ClientRequest {
-  int id;
+  int? id;
   int idClient;
   String pickupDescription;
   String destinationDescription;
@@ -20,7 +16,7 @@ class ClientRequest {
   double destinationLng;
 
   ClientRequest({
-    required this.id,
+    this.id,
     required this.idClient,
     required this.pickupDescription,
     required this.destinationDescription,

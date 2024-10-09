@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:indriver_clone_flutter/src/domain/models/TimeAndDistanceValues.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
@@ -42,6 +43,7 @@ class _ClientMapBookingInfoPageState extends State<ClientMapBookingInfoPage> {
     });
   }
 
+  // Dentro de ClientMapBookingInfoPage
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> arguments =
@@ -51,20 +53,35 @@ class _ClientMapBookingInfoPageState extends State<ClientMapBookingInfoPage> {
     pickUpDescription = arguments['pickUpDescription'];
     destinationDescription = arguments['destinationDescription'];
     return Scaffold(
-      body: BlocBuilder<ClientMapBookingInfoBloc, ClientMapBookingInfoState>(
-        builder: (context, state) {
-          final responseTimeAndDistance = state.responseTimeAndDistance;
-          if (responseTimeAndDistance is Loading) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (responseTimeAndDistance is Success) {
-            TimeAndDistanceValues timeAndDistanceValues =
-                responseTimeAndDistance.data as TimeAndDistanceValues;
-            return ClientMapBookingInfoContent(state, timeAndDistanceValues);
+      body: BlocListener<ClientMapBookingInfoBloc, ClientMapBookingInfoState>(
+        listener: (context, state) {
+          final responseClientRequest = state.responseClientRequest;
+          if (responseClientRequest is Success && state.isRequestSubmitted) {
+            Fluttertoast.showToast(
+                msg: 'Solicitud Enviada', toastLength: Toast.LENGTH_LONG);
+
+            // Reset the flag to avoid showing the toast again on rebuild
+            context
+                .read<ClientMapBookingInfoBloc>()
+                .add(ResetRequestFlagEvent());
           }
-          return Container();
         },
+        child: BlocBuilder<ClientMapBookingInfoBloc, ClientMapBookingInfoState>(
+          builder: (context, state) {
+            final responseTimeAndDistance = state.responseTimeAndDistance;
+            if (responseTimeAndDistance is Loading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (responseTimeAndDistance is Success) {
+              TimeAndDistanceValues timeAndDistanceValues =
+                  responseTimeAndDistance.data as TimeAndDistanceValues;
+              return ClientMapBookingInfoContent(state, timeAndDistanceValues,
+                  context.read<ClientMapBookingInfoBloc>());
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }

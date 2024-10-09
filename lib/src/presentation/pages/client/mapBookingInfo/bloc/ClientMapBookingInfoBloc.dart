@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
+import 'package:indriver_clone_flutter/src/domain/models/AuthResponse.dart';
+import 'package:indriver_clone_flutter/src/domain/models/ClientRequest.dart';
 import 'package:indriver_clone_flutter/src/domain/models/TimeAndDistanceValues.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/ClientRequestUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GeolocatorUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
@@ -19,8 +22,10 @@ class ClientMapBookingInfoBloc
 
   GeolocatorUseCases geolocatorUseCases;
   ClientRequestUseCases clientRequestUseCases;
+  AuthUseCases authUseCases;
 
-  ClientMapBookingInfoBloc(this.geolocatorUseCases, this.clientRequestUseCases)
+  ClientMapBookingInfoBloc(
+      this.geolocatorUseCases, this.clientRequestUseCases, this.authUseCases)
       : super(ClientMapBookingInfoState(
             controller: Completer<GoogleMapController>())) {
     on<ClientMapBookingInfoResetEvent>((event, emit) {
@@ -93,6 +98,31 @@ class ClientMapBookingInfoBloc
       } catch (e) {
         print('Error al cambiar la posición de la cámara: $e');
       }
+    });
+
+    on<CreateClientRequest>((event, emit) async {
+      AuthResponse authResponse = await authUseCases.getUserSession.run();
+      Resource<bool> response =
+          await clientRequestUseCases.createClientRequest.run(
+        ClientRequest(
+          idClient: authResponse.user.id!,
+          pickupDescription: state.pickUpDescription,
+          destinationDescription: state.destinationDescription,
+          pickupLat: state.pickUpLatLng!.latitude,
+          pickupLng: state.pickUpLatLng!.longitude,
+          destinationLat: state.destinationLatLng!.latitude,
+          destinationLng: state.destinationLatLng!.longitude,
+        ),
+      );
+
+      emit(state.copyWith(
+        responseClientRequest: response,
+        isRequestSubmitted: true,
+      ));
+    });
+
+    on<ResetRequestFlagEvent>((event, emit) {
+      emit(state.copyWith(isRequestSubmitted: false));
     });
 
     on<GetTimeAndDistanceValues>((event, emit) async {

@@ -1,15 +1,23 @@
 import 'package:indriver_clone_flutter/src/data/dataSource/local/SharefPref.dart';
+import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/AgencyRoutesService.dart';
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/AuthService.dart';
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/ClientRequestService.dart';
+import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/FrecuenciesService.dart';
+import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/RoutesService.dart';
+import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/StopsService.dart';
+import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/TimesService.dart';
+import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/TripService.dart';
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/UsersService.dart';
 import 'package:indriver_clone_flutter/src/data/repository/AuthRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/data/repository/ClienteRequestRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/data/repository/GeolocatorRepositoryImpl.dart';
+import 'package:indriver_clone_flutter/src/data/repository/RoutesRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/data/repository/UsersRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/domain/models/AuthResponse.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/AuthRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/ClientRequestRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/GeolocatorRepository.dart';
+import 'package:indriver_clone_flutter/src/domain/repository/RoutesRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/UsersRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/LoginUseCase.dart';
@@ -18,6 +26,7 @@ import 'package:indriver_clone_flutter/src/domain/useCases/auth/RegisterUseCase.
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/SaveUserSessionUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/getUserSessionUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/ClientRequestUseCases.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/CreateClientRequestUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/getTimeAndDistanceUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/CreateMarketUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/FindPositionUseCase.dart';
@@ -25,6 +34,8 @@ import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/Geolocator
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetMarkerUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetPlacemarkDataUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetPolylineUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/routes-suggested/GetRoutesSuggetedUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/routes-suggested/RoutesUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UpdateUserUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UsersUseCases.dart';
 import 'package:injectable/injectable.dart';
@@ -66,6 +77,30 @@ abstract class AppModule {
   @injectable
   GeolocatorRepository get geoLocatorRepository => GeolocatorRepositoryImpl();
 
+  // Rutas
+
+  @injectable
+  AgencyRoutesService get agencyRoutesService => AgencyRoutesService();
+
+  @injectable
+  StopsService get stopsService => StopsService();
+
+  @injectable
+  TimesService get timesService => TimesService();
+
+  @injectable
+  FrequenciesService get frequenciesService => FrequenciesService();
+
+  @injectable
+  TripService get tripService => TripService();
+
+  @injectable
+  RoutesService get routesService =>
+      RoutesService(agencyRoutesService, stopsService);
+
+  @injectable
+  RoutesRepository get routesRepository => RoutesRepositoryImpl(routesService);
+
   @injectable
   ClientRequestRepository get clientRequestRepository =>
       ClienteRequestRepositoryImpl(clientRequestService);
@@ -94,6 +129,14 @@ abstract class AppModule {
 
   @injectable
   ClientRequestUseCases get clientRequestUseCases => ClientRequestUseCases(
+        createClientRequest:
+            CreateClientRequestUseCase(clientRequestRepository),
         getTimeAndDistance: GetTimeAndDistanceUseCase(clientRequestRepository),
+      );
+
+  // **Registrar RoutesUseCases**
+  @injectable
+  RoutesUseCases get routesUseCases => RoutesUseCases(
+        getRoutesSuggetedUseCase: GetRoutesSuggestedUseCase(routesRepository),
       );
 }
