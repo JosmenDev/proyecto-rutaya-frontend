@@ -1,8 +1,8 @@
 class Frequencies {
-  int tripId;
+  String tripId;
   String startTime;
   String endTime;
-  int headwaySecs;
+  String headwaySecs;
 
   Frequencies({
     required this.tripId,
@@ -15,10 +15,10 @@ class Frequencies {
   factory Frequencies.fromTxt(String line) {
     final parts = line.split(',');
     return Frequencies(
-      tripId: int.parse(parts[0]),
+      tripId: parts[0],
       startTime: parts[1],
       endTime: parts[2],
-      headwaySecs: int.parse(parts[3]),
+      headwaySecs: parts[3],
     );
   }
 

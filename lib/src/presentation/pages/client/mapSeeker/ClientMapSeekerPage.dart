@@ -24,7 +24,7 @@ class ClientMapSeekerPage extends StatefulWidget {
 class _ClientMapSeekerPageState extends State<ClientMapSeekerPage> {
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
+    zoom: 20,
   );
 
 // posicion
@@ -110,9 +110,8 @@ class _ClientMapSeekerPageState extends State<ClientMapSeekerPage> {
                               state.destinationDescription,
                         });
                   },
-                  color: celeste, // Cambia el color según tus necesidades
-                  direction:
-                      'Submit', // Puede que este parámetro no sea necesario, ajústalo si es el caso
+                  color:
+                      celeste, // Puede que este parámetro no sea necesario, ajústalo si es el caso
                   text: 'Buscar ruta',
                 ),
               ),

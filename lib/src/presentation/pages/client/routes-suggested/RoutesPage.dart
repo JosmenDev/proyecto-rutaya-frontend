@@ -13,6 +13,7 @@ class RoutesPage extends StatelessWidget {
     // Obtener latitud y longitud del origen y destino
     final originLatLng = arguments['pickUpLatLng'];
     final destLatLng = arguments['destinationLatLng'];
+    // final idClientRequest = arguments['idClientRequest'];
 
     // Despachar el evento para obtener las rutas sugeridas con las coordenadas después de que se construye el widget
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -26,6 +27,7 @@ class RoutesPage extends StatelessWidget {
 
     return Scaffold(
       body: RoutesContent(
+        idClientRequest: arguments['idClientRequest'],
         pickUpDescription: arguments['pickUpDescription'],
         destinationDescription: arguments['destinationDescription'],
       ), // Usa el RoutesContent directamente

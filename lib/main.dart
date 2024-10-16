@@ -7,6 +7,7 @@ import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/LoginPa
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/register/RegisterPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/home/ClientHomePage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingInfo/ClientMapBookingInfoPage.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/MapTripPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/RoutesPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/update/ProfileUpdatePage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/splash/splash_screen.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
             'client/map/booking': (BuildContext context) =>
                 ClientMapBookingInfoPage(),
             'client/routes-suggested': (BuildContext context) => RoutesPage(),
+            'client/map-trip': (BuildContext context) => MapTripPage(),
           }),
     );
   }

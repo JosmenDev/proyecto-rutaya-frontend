@@ -133,17 +133,7 @@ class ClientMapBookingInfoContent extends StatelessWidget {
             Defaultbutton(
               size: MediaQuery.of(context).size,
               onPressed: () {
-                bloc.add(CreateClientRequest());
-                Navigator.pushNamed(
-                  context,
-                  'client/routes-suggested',
-                  arguments: {
-                    'pickUpLatLng': state.pickUpLatLng,
-                    'destinationLatLng': state.destinationLatLng,
-                    'pickUpDescription': state.pickUpDescription,
-                    'destinationDescription': state.destinationDescription,
-                  },
-                );
+                bloc.add(CreateClientRequest()); // Solo dispara la solicitud
               },
               color: celeste,
               direction: 'Submit',

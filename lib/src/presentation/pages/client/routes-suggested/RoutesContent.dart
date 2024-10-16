@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/colors/colors.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesBloc.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesState.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultIconBack.dart';
 
 class RoutesContent extends StatelessWidget {
+  final String idClientRequest;
   final String pickUpDescription;
   final String destinationDescription;
 
-  RoutesContent(
-      {required this.pickUpDescription, required this.destinationDescription});
+  RoutesContent({
+    required this.idClientRequest,
+    required this.pickUpDescription,
+    required this.destinationDescription,
+  });
 
   String? extractQuotedText(String input) {
     final RegExp regExp = RegExp(r'"(.*?)"');
@@ -89,16 +94,22 @@ class RoutesContent extends StatelessWidget {
                       itemCount: state.routesList.length,
                       itemBuilder: (context, index) {
                         final route = state.routesList[index];
+                        // print('ID CLIENT REQUEST: $idClientRequest');
+                        // print('Route $index: $route');
                         final String quotedText =
                             extractQuotedText(route.name) ??
                                 'Nombre no disponible';
                         return RouteCard(
                           routeName: '${route.agencyName} $quotedText',
                           estimatedTime:
-                              '16 min', // Ajusta según la lógica de tu aplicación
-                          arrivalTime: '5:30 pm',
-                          distance: '550 m',
+                              '${route.totalEstimatedTime}', // Ajusta según la lógica de tu aplicación
+                          arrivalTime: route.nextArrivalTime!,
+                          distance: '${route.distanceToDisplay} m',
                           fare: '2 PEN',
+                          quotedText: quotedText, // Pasamos quotedText
+                          route:
+                              route, // Pasamos la ruta completa para usar sus datos en el botón
+                          idClientRequest: idClientRequest,
                         );
                       },
                     );
@@ -140,6 +151,9 @@ class RouteCard extends StatelessWidget {
   final String arrivalTime;
   final String distance;
   final String fare;
+  final String quotedText;
+  final dynamic route;
+  final String idClientRequest;
 
   RouteCard({
     required this.routeName,
@@ -147,6 +161,9 @@ class RouteCard extends StatelessWidget {
     required this.arrivalTime,
     required this.distance,
     required this.fare,
+    required this.quotedText,
+    required this.route,
+    required this.idClientRequest,
   });
 
   @override
@@ -164,7 +181,7 @@ class RouteCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Tiempo estimado: $estimatedTime',
+                  'Tiempo estimado: $estimatedTime minutos',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Icon(Icons.directions_bus),
@@ -194,7 +211,28 @@ class RouteCard extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: ElevatedButton(
                 onPressed: () {
-                  // Acción para seleccionar la ruta
+                  context.read<RoutesBloc>().add(RouteSelect(
+                        idClientRequest: int.parse(idClientRequest),
+                        agencyLongName: '${route.agencyName} $quotedText',
+                        originStopDescription: '',
+                        destinationStopDescription: '',
+                        originStopLat: route.originStopLat,
+                        originStopLng: route.originStopLng,
+                        destStopLat: route.destStopLat,
+                        destStopLng: route.destStopLng,
+                        distanceRoute: double.parse(route
+                            .distanceToDisplay), // Usa simplemente la variable
+                        timeRoute: int.parse(route
+                            .totalEstimatedTime), // Usa simplemente la variable
+                        tarifaRoute: 2, // Usa simplemente la variable
+                      ));
+                  Navigator.pushNamed(
+                    context,
+                    'client/map-trip',
+                    arguments: {
+                      'idClientRequest': idClientRequest,
+                    },
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: celeste,

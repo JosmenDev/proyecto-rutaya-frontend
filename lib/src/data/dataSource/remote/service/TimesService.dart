@@ -6,28 +6,22 @@ class TimesService {
     final String data =
         await rootBundle.loadString('assets/routes/gtfs/stop_times.txt');
     List<Times> timesList = [];
-
-    final lines = data
-        .split('\n')
-        .skip(1); // Saltar explícitamente la primera línea (posible encabezado)
+    final lines = data.split('\n');
 
     for (var line in lines) {
-      line = line.trim();
-      print('Línea original: "$line"'); // Depuración adicional
-      print('Línea después de trim: "$line"'); // Depuración adicional
-
-      // Saltar líneas vacías
-      if (line.isEmpty) {
-        print('Línea vacía, se omite.');
-        continue;
-      }
+      if (line.trim().isEmpty || line.startsWith('trip_id')) continue;
 
       try {
-        timesList.add(Times.fromTxt(line));
+        Times time = Times.fromTxt(line);
+        timesList.add(time);
+
+        // Imprimir el stopId para verificar que se están cargando los datos correctos
+        print('Cargando stopId: ${time.stopId}');
       } catch (e) {
-        print('Error al parsear la línea: $line. Detalles del error: $e');
+        print('Error al procesar la línea: $line, Error: $e');
       }
     }
+
     return timesList;
   }
 }

@@ -74,13 +74,14 @@ class ClientMapSeekerBloc
     });
 
     on<ChangeMapCameraPosition>((event, emit) async {
-      if (!state.controller.isCompleted) {
-        pendingEvents.add(event);
-        return;
-      }
+      // if (!state.controller.isCompleted) {
+      //   pendingEvents.add(event);
+      //   return;
+      // }
 
       try {
-        GoogleMapController googleMapController = await state.controller.future;
+        GoogleMapController googleMapController =
+            await state.controller!.future;
         googleMapController.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(

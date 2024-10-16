@@ -22,6 +22,7 @@ class _ClientMapBookingInfoPageState extends State<ClientMapBookingInfoPage> {
   LatLng? destinationLatLng;
   String? pickUpDescription;
   String? destinationDescription;
+  String? idClientRequest;
 
   @override
   void initState() {
@@ -57,10 +58,24 @@ class _ClientMapBookingInfoPageState extends State<ClientMapBookingInfoPage> {
         listener: (context, state) {
           final responseClientRequest = state.responseClientRequest;
           if (responseClientRequest is Success && state.isRequestSubmitted) {
+            String idClientRequest = responseClientRequest.data.toString();
+            // print('ID CLIENT REQUEST ${responseClientRequest.data}');
             Fluttertoast.showToast(
                 msg: 'Solicitud Enviada', toastLength: Toast.LENGTH_LONG);
 
-            // Reset the flag to avoid showing the toast again on rebuild
+            // Navega a la nueva pantalla y pasa idClientRequest
+            Navigator.pushNamed(
+              context,
+              'client/routes-suggested',
+              arguments: {
+                'pickUpLatLng': pickUpLatLng,
+                'destinationLatLng': destinationLatLng,
+                'pickUpDescription': pickUpDescription,
+                'destinationDescription': destinationDescription,
+                'idClientRequest':
+                    idClientRequest, // Pasar el ID de la solicitud
+              },
+            );
             context
                 .read<ClientMapBookingInfoBloc>()
                 .add(ResetRequestFlagEvent());

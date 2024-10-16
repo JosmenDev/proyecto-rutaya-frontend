@@ -5,14 +5,14 @@ class Defaultbutton extends StatelessWidget {
   Function() onPressed;
   Size size;
   Color color;
-  String direction;
+  String? direction;
   String text;
 
   Defaultbutton({
     required this.size,
     required this.onPressed,
     required this.color,
-    required this.direction,
+    this.direction,
     required this.text,
   });
 

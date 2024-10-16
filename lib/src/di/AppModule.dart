@@ -27,6 +27,8 @@ import 'package:indriver_clone_flutter/src/domain/useCases/auth/SaveUserSessionU
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/getUserSessionUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/ClientRequestUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/CreateClientRequestUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/GetByClientRequestUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/UpdateRouteSelectUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/getTimeAndDistanceUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/CreateMarketUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/FindPositionUseCase.dart';
@@ -132,6 +134,8 @@ abstract class AppModule {
         createClientRequest:
             CreateClientRequestUseCase(clientRequestRepository),
         getTimeAndDistance: GetTimeAndDistanceUseCase(clientRequestRepository),
+        updateRouteSelect: UpdateRouteSelectUseCase(clientRequestRepository),
+        getByClientRequest: GetByClientRequestUseCase(clientRequestRepository),
       );
 
   // **Registrar RoutesUseCases**

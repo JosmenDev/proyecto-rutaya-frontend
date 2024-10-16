@@ -13,10 +13,19 @@ class Routes {
   String from;
   String to;
   List<Connection> connections;
-  List<double> distances;
+  List<String> distances;
   String? agencyName;
   String? nextArrivalTime;
-  // Direcciones
+  String? distanceToDisplay;
+  String? totalEstimatedTime;
+
+  // Nuevos campos
+  String? originStopDescription;
+  String? destinationStopDescription;
+  double? originStopLat;
+  double? originStopLng;
+  double? destStopLat;
+  double? destStopLng;
 
   Routes({
     required this.id,
@@ -28,6 +37,14 @@ class Routes {
     required this.distances,
     this.agencyName,
     this.nextArrivalTime,
+    this.distanceToDisplay,
+    this.totalEstimatedTime,
+    this.originStopDescription,
+    this.destinationStopDescription,
+    this.originStopLat,
+    this.originStopLng,
+    this.destStopLat,
+    this.destStopLng,
   });
 
   factory Routes.fromJson(Map<String, dynamic> json) => Routes(
@@ -39,7 +56,28 @@ class Routes {
         connections: List<Connection>.from(
             json["connections"].map((x) => Connection.fromJson(x))),
         distances:
-            List<double>.from(json["distances"].map((x) => x.toDouble())),
+            List<String>.from(json["distances"].map((x) => x.toString())),
+        agencyName: json["agencyName"],
+        nextArrivalTime: json["nextArrivalTime"],
+        distanceToDisplay: json["distanceToDisplay"] != null
+            ? json["distanceToDisplay"].toString()
+            : null,
+        totalEstimatedTime: json["totalEstimatedTime"],
+        originStopDescription: json["originStopDescription"], // Nuevo campo
+        destinationStopDescription:
+            json["destinationStopDescription"], // Nuevo campo
+        originStopLat: json["originStopLat"] != null
+            ? json["originStopLat"].toDouble()
+            : null, // Nuevo campo
+        originStopLng: json["originStopLng"] != null
+            ? json["originStopLng"].toDouble()
+            : null, // Nuevo campo
+        destStopLat: json["destStopLat"] != null
+            ? json["destStopLat"].toDouble()
+            : null, // Nuevo campo
+        destStopLng: json["destStopLng"] != null
+            ? json["destStopLng"].toDouble()
+            : null, // Nuevo campo
       );
 
   Map<String, dynamic> toJson() => {
@@ -52,6 +90,15 @@ class Routes {
         "distances": List<dynamic>.from(distances.map((x) => x)),
         "agencyName": agencyName,
         "nextArrivalTime": nextArrivalTime,
+        "distanceToDisplay": distanceToDisplay,
+        "totalEstimatedTime": totalEstimatedTime,
+
+        "originStopDescription": originStopDescription, // Nuevo campo
+        "destinationStopDescription": destinationStopDescription, // Nuevo campo
+        "originStopLat": originStopLat, // Nuevo campo
+        "originStopLng": originStopLng, // Nuevo campo
+        "destStopLat": destStopLat, // Nuevo campo
+        "destStopLng": destStopLng, // Nuevo campo
       };
 }
 

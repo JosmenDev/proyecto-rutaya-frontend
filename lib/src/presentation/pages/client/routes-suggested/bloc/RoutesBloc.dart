@@ -1,13 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:indriver_clone_flutter/src/domain/models/Routes.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/ClientRequestUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/routes-suggested/RoutesUseCases.dart';
+import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesState.dart';
 
 class RoutesBloc extends Bloc<RoutesEvent, RoutesState> {
   final RoutesUseCases routesUseCases;
+  ClientRequestUseCases clientRequestUseCases;
 
-  RoutesBloc(this.routesUseCases) : super(RoutesState()) {
+  RoutesBloc(this.routesUseCases, this.clientRequestUseCases)
+      : super(RoutesState()) {
     on<GetRoutesSuggets>((event, emit) async {
       try {
         // Emitir estado de carga
@@ -34,6 +38,26 @@ class RoutesBloc extends Bloc<RoutesEvent, RoutesState> {
           errorMessage: 'Error al cargar las rutas: $e',
         ));
       }
+    });
+
+    on<RouteSelect>((event, emit) async {
+      Resource<bool> response =
+          await clientRequestUseCases.updateRouteSelect.run(
+        event.idClientRequest,
+        event.agencyLongName,
+        event.originStopDescription,
+        event.destinationStopDescription,
+        event.originStopLat,
+        event.originStopLng,
+        event.destStopLat,
+        event.destStopLng,
+        event.distanceRoute,
+        event.timeRoute,
+        event.tarifaRoute,
+      );
+      emit(state.copyWith(
+        responseRouteSelect: response,
+      ));
     });
   }
 }

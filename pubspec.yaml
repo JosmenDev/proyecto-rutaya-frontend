@@ -101,6 +101,7 @@ flutter:
     - assets/routes/gtfs/stop_times.txt
     - assets/routes/gtfs/stops.txt
     - assets/routes/gtfs/trips.txt
+    - assets/routes/geo/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

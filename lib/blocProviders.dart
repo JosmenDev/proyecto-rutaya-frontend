@@ -13,6 +13,7 @@ import 'package:indriver_clone_flutter/src/presentation/pages/client/home/bloc/C
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingInfo/bloc/ClientMapBookingInfoBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/bloc/ClientMapSeekerBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/bloc/ClientMapSeekerEvent.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/Bloc/MapTripBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/info/bloc/ProfileInfoBloc.dart';
@@ -43,6 +44,10 @@ List<BlocProvider> blocProviders = [
           locator<ClientRequestUseCases>(),
           locator<AuthUseCases>())),
   BlocProvider<RoutesBloc>(
-    create: (context) => RoutesBloc(locator<RoutesUseCases>()),
+    create: (context) =>
+        RoutesBloc(locator<RoutesUseCases>(), locator<ClientRequestUseCases>()),
+  ),
+  BlocProvider<MapTripBloc>(
+    create: (context) => MapTripBloc(locator<ClientRequestUseCases>()),
   ),
 ];

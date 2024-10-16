@@ -68,8 +68,7 @@ class ClientMapBookingInfoState extends Equatable {
           destinationDescription ?? this.destinationDescription,
       responseTimeAndDistance:
           responseTimeAndDistance ?? this.responseTimeAndDistance,
-      responseClientRequest:
-          responseTimeAndDistance ?? this.responseClientRequest,
+      responseClientRequest: responseClientRequest,
       isRequestSubmitted: isRequestSubmitted ?? this.isRequestSubmitted,
     );
   }

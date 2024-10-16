@@ -20,7 +20,39 @@ class ClienteRequestRepositoryImpl implements ClientRequestRepository {
   }
 
   @override
-  Future<Resource<bool>> create(ClientRequest clientRequest) {
+  Future<Resource<int>> create(ClientRequest clientRequest) {
     return clientRequestService.create(clientRequest);
+  }
+
+  @override
+  Future<Resource<bool>> updateRouteSelect(
+      int idClientRequest,
+      String agencyLongName,
+      String originStopDescription,
+      String destinationStopDescription,
+      double originStopLat,
+      double originStopLng,
+      double destStopLat,
+      double destStopLng,
+      double distanceRoute,
+      int timeRoute,
+      double tarifaRoute) {
+    return clientRequestService.updateRouteSelect(
+        idClientRequest,
+        agencyLongName,
+        originStopDescription,
+        destinationStopDescription,
+        originStopLat,
+        originStopLng,
+        destStopLat,
+        destStopLng,
+        distanceRoute,
+        timeRoute,
+        tarifaRoute);
+  }
+
+  @override
+  Future<Resource<ClientRequest>> getByClientRequest(int idClientRequest) {
+    return clientRequestService.getByClientRequest(idClientRequest);
   }
 }

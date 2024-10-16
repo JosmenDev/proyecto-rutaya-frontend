@@ -41,18 +41,6 @@ class _LoginPageState extends State<LoginPage> {
         },
         child: BlocBuilder<LoginBloc, LoginState>(
           builder: (context, state) {
-            // final response = state.response;
-            // // para mostrar al usuario que se está ejecutando su operacion
-            // if (response is Loading) {
-            //   return Stack(
-            //     children: [
-            //       LoginContent(state),
-            //       Center(
-            //         child: CircularProgressIndicator(),
-            //       ),
-            //     ],
-            //   );
-            // }
             return LoginContent(state);
           },
         ),

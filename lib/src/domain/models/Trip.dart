@@ -1,8 +1,8 @@
 class Trip {
-  int tripId;
-  int routeId;
-  int serviceId;
-  int shapeId;
+  String tripId;
+  String routeId;
+  String serviceId;
+  String shapeId;
 
   Trip({
     required this.tripId,
@@ -15,10 +15,10 @@ class Trip {
   factory Trip.fromTxt(String line) {
     final parts = line.split(',');
     return Trip(
-      tripId: int.parse(parts[0]),
-      routeId: int.parse(parts[1]),
-      serviceId: int.parse(parts[2]),
-      shapeId: int.parse(parts[3]),
+      tripId: parts[0],
+      routeId: parts[1],
+      serviceId: parts[2],
+      shapeId: parts[3],
     );
   }
 
