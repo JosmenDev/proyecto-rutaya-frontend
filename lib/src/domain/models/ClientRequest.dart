@@ -21,6 +21,7 @@ class ClientRequest {
   double? destinationStopLng;
   double? tarifaRoute;
   double? distanceRoute;
+  String? durationRoute;
 
   ClientRequest({
     this.id,
@@ -38,6 +39,7 @@ class ClientRequest {
     this.destinationStopLng,
     this.tarifaRoute,
     this.distanceRoute,
+    this.durationRoute,
   });
 
   factory ClientRequest.fromJson(Map<String, dynamic> json) => ClientRequest(
@@ -80,6 +82,9 @@ class ClientRequest {
         distanceRoute: json["distance_route"] is String
             ? double.parse(json["distance_route"])
             : json["distance_route"]?.toDouble(),
+        durationRoute: json["duration"] is String
+            ? json["duration"]
+            : json["duration"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -98,5 +103,6 @@ class ClientRequest {
         "destination_stop_lng": destinationStopLng,
         "tarifa_route": tarifaRoute,
         "distance_route": distanceRoute,
+        "duration": durationRoute,
       };
 }
