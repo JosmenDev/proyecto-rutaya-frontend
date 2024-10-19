@@ -103,7 +103,36 @@ class GeolocatorRepositoryImpl implements GeolocatorRepository {
         destination: PointLatLng(
             destinationLatLng.latitude, destinationLatLng.longitude),
         mode: TravelMode.driving,
-        wayPoints: [PolylineWayPoint(location: "Trujillo, Perú")],
+        // wayPoints: [PolylineWayPoint(location: "Trujillo, Perú")],
+      ),
+    );
+    List<LatLng> polylineCoordinates = [];
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+    return polylineCoordinates;
+  }
+
+  @override
+  Stream<Position> getPositionStream() {
+    LocationSettings locationSettings =
+        LocationSettings(accuracy: LocationAccuracy.best, distanceFilter: 1);
+    return Geolocator.getPositionStream(locationSettings: locationSettings);
+  }
+
+  @override
+  Future<List<LatLng>> getPolylineWalking(
+      LatLng pickUpLatLng, LatLng destinationLatLng) async {
+    PolylineResult result = await PolylinePoints().getRouteBetweenCoordinates(
+      googleApiKey: API_KEY_GOOGLE,
+      request: PolylineRequest(
+        origin: PointLatLng(pickUpLatLng.latitude, pickUpLatLng.longitude),
+        destination: PointLatLng(
+            destinationLatLng.latitude, destinationLatLng.longitude),
+        mode: TravelMode.walking,
+        // wayPoints: [PolylineWayPoint(location: "Trujillo, Perú")],
       ),
     );
     List<LatLng> polylineCoordinates = [];

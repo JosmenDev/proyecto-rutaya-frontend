@@ -1,4 +1,5 @@
 import 'package:indriver_clone_flutter/src/domain/models/ClientRequest.dart';
+import 'package:indriver_clone_flutter/src/domain/models/StatusTrip.dart';
 import 'package:indriver_clone_flutter/src/domain/models/TimeAndDistanceValues.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
 
@@ -25,4 +26,7 @@ abstract class ClientRequestRepository {
       double tarifaRoute);
 
   Future<Resource<ClientRequest>> getByClientRequest(int idClientRequest);
+
+  Future<Resource<bool>> updateStatus(
+      int idClientRequest, StatusTrip statusTrip);
 }

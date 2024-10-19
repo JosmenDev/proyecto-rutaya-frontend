@@ -1,5 +1,6 @@
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/ClientRequestService.dart';
 import 'package:indriver_clone_flutter/src/domain/models/ClientRequest.dart';
+import 'package:indriver_clone_flutter/src/domain/models/StatusTrip.dart';
 import 'package:indriver_clone_flutter/src/domain/models/TimeAndDistanceValues.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/ClientRequestRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
@@ -54,5 +55,11 @@ class ClienteRequestRepositoryImpl implements ClientRequestRepository {
   @override
   Future<Resource<ClientRequest>> getByClientRequest(int idClientRequest) {
     return clientRequestService.getByClientRequest(idClientRequest);
+  }
+
+  @override
+  Future<Resource<bool>> updateStatus(
+      int idClientRequest, StatusTrip statusTrip) {
+    return clientRequestService.updateStatus(idClientRequest, statusTrip);
   }
 }

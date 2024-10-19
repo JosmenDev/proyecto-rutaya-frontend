@@ -19,7 +19,7 @@ class Defaultbutton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: size.height * 0.04),
+      margin: EdgeInsets.only(top: size.height * 0.005),
       height: size.height * 0.06, // Ajusta la altura del botón
       width: double.infinity,
       child: ElevatedButton(

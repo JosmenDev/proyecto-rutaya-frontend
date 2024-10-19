@@ -14,11 +14,13 @@ class ClientRequest {
   double pickupLng;
   double destinationLat;
   double destinationLng;
+  String? agencyLongName;
   double? pickupStopLat;
   double? pickupStopLng;
   double? destinationStopLat;
   double? destinationStopLng;
   double? tarifaRoute;
+  double? distanceRoute;
 
   ClientRequest({
     this.id,
@@ -29,11 +31,13 @@ class ClientRequest {
     required this.pickupLng,
     required this.destinationLat,
     required this.destinationLng,
+    this.agencyLongName,
     this.pickupStopLat,
     this.pickupStopLng,
     this.destinationStopLat,
     this.destinationStopLng,
     this.tarifaRoute,
+    this.distanceRoute,
   });
 
   factory ClientRequest.fromJson(Map<String, dynamic> json) => ClientRequest(
@@ -56,6 +60,7 @@ class ClientRequest {
             ? double.parse(json["destination_lng"])
             : json["destination_lng"]?.toDouble(),
 
+        agencyLongName: json["agency_long_name"],
         pickupStopLat: json["pickup_stop_lat"] is String
             ? double.parse(json["pickup_stop_lat"])
             : json["pickup_stop_lat"]?.toDouble(),
@@ -72,6 +77,9 @@ class ClientRequest {
         tarifaRoute: json["tarifa_route"] is String
             ? double.parse(json["tarifa_route"])
             : json["tarifa_route"]?.toDouble(),
+        distanceRoute: json["distance_route"] is String
+            ? double.parse(json["distance_route"])
+            : json["distance_route"]?.toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -83,10 +91,12 @@ class ClientRequest {
         "pickup_lng": pickupLng,
         "destination_lat": destinationLat,
         "destination_lng": destinationLng,
+        "agency_long_name": agencyLongName,
         "pickup_stop_lat": pickupStopLat,
         "pickup__stop_lng": pickupStopLng,
         "destination_stop_lat": destinationStopLat,
         "destination_stop_lng": destinationStopLng,
         "tarifa_route": tarifaRoute,
+        "distance_route": distanceRoute,
       };
 }

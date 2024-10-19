@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:indriver_clone_flutter/blocSocketIO/BlocSocketIO.dart';
 import 'package:indriver_clone_flutter/injection.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/ClientRequestUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GeolocatorUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/routes-suggested/RoutesUseCases.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/socket/SocketUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UsersUseCases.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginEvent.dart';
@@ -27,6 +29,9 @@ List<BlocProvider> blocProviders = [
   BlocProvider<RegisterBloc>(
       create: (context) =>
           RegisterBloc(locator<AuthUseCases>())..add(RegisterInitEvent())),
+  BlocProvider<BlocSocketIO>(
+      create: (context) =>
+          BlocSocketIO(locator<SocketUseCases>(), locator<AuthUseCases>())),
   BlocProvider<ClientHomeBloc>(
       create: (context) => ClientHomeBloc(locator<AuthUseCases>())),
   BlocProvider<ProfileInfoBloc>(
@@ -48,6 +53,10 @@ List<BlocProvider> blocProviders = [
         RoutesBloc(locator<RoutesUseCases>(), locator<ClientRequestUseCases>()),
   ),
   BlocProvider<MapTripBloc>(
-    create: (context) => MapTripBloc(locator<ClientRequestUseCases>()),
+    create: (context) => MapTripBloc(
+        context.read<BlocSocketIO>(),
+        locator<ClientRequestUseCases>(),
+        locator<GeolocatorUseCases>(),
+        locator<AuthUseCases>()),
   ),
 ];

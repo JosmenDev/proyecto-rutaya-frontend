@@ -24,8 +24,10 @@ class _MapTripPageState extends State<MapTripPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (idClientRequest != null) {
         print('ID CLIENT REQUEST $idClientRequest');
+        context.read<MapTripBloc>().add(MapTripInitEvent());
         context.read<MapTripBloc>().add(
             GetClientRequest(idClientRequest: int.parse(idClientRequest!)));
+        // context.read<MapTripBloc>().add(ListenTripPosition());
       }
     });
   }
@@ -42,6 +44,9 @@ class _MapTripPageState extends State<MapTripPage> {
           if (responseClientRequest is Success) {
             final data = responseClientRequest.data as ClientRequest;
             print('ClientRequestResponse: ${data.toJson()}');
+            // context
+            //     .read<MapTripBloc>()
+            //     .add(AddMarketPickup(lat: data.pickupLat, lng: data.pickupLng));
           } else if (responseClientRequest is ErrorData) {
             Fluttertoast.showToast(
                 msg: responseClientRequest.message,
@@ -50,7 +55,17 @@ class _MapTripPageState extends State<MapTripPage> {
         },
         child: BlocBuilder<MapTripBloc, MapTripState>(
           builder: (context, state) {
-            return MapTripContent();
+            final responseClientRequest = state.responseGetClientRequest;
+            if (responseClientRequest is Success) {
+              final data = responseClientRequest.data as ClientRequest;
+              print('ClientRequestResponse: ${data.toJson()}');
+              return MapTripContent(state, data, null);
+            }
+            return Container(
+              child: Center(
+                child: Text('Error al cargar mapa'),
+              ),
+            );
           },
         ),
       ),

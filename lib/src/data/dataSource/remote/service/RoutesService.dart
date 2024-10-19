@@ -33,6 +33,7 @@ class RoutesService {
           await rootBundle.loadString('assets/routes/routes.json');
       List<Routes> routesList = RoutesFromJson(jsonString);
 
+      // Cargar las paradas de la base de datos
       final Map<String, Stops> stopsMap = await stopsService.getAllStops();
 
       List<Routes> filteredRoutes = [];
@@ -41,7 +42,6 @@ class RoutesService {
       for (var route in routesList) {
         String routeId = route.id.toString();
         String routeName = route.name;
-        List<dynamic> stops = route.stops;
 
         // Obtener el nombre de la agencia para esta ruta
         String? agencyId = routeToAgencyMap[route.id.toString()];
@@ -49,106 +49,105 @@ class RoutesService {
             ? agencyMap[agencyId] ?? 'Nombre no disponible'
             : 'Nombre no disponible';
 
-        bool hasOriginStop = false;
-        bool hasDestStop = false;
+        bool hasValidOrigin = false;
+        bool hasValidDest = false;
         String? closestArrivalTime;
         double? totalDistance;
         String? totalTimeEstimate;
 
-        // Recorrer las paradas de la ruta
-        for (var stopId in route.stops) {
-          Stops? stop = stopsMap[stopId.toString()];
+        // Obtener las coordenadas del trayecto de la ruta desde el archivo geojson
+        String geojsonPath = 'assets/routes/geo/$routeId.geojson';
+        try {
+          String geojsonString = await rootBundle.loadString(geojsonPath);
+          final routeCoordinates =
+              geoRoutesFromJson(geojsonString).features[0].geometry.coordinates;
 
-          if (stop != null) {
-            double distanceToOrigin =
-                calculateDistance(originLat, originLng, stop.lat, stop.lng);
+          // Encontrar el punto más cercano al origen del usuario
+          int closestOriginIndex = _findClosestCoordinateIndex(
+              originLat, originLng, routeCoordinates);
+          double originDistance = calculateDistance(
+              originLat,
+              originLng,
+              routeCoordinates[closestOriginIndex][1],
+              routeCoordinates[closestOriginIndex][0]);
 
-            if (distanceToOrigin <= proximityRadius) {
-              hasOriginStop = true;
-              // Aquí llenamos la descripción y coordenadas de la parada de origen
-              route.originStopLat = stop.lat;
-              route.originStopLng = stop.lng;
+          // Encontrar el punto más cercano al destino del usuario
+          int closestDestIndex =
+              _findClosestCoordinateIndex(destLat, destLng, routeCoordinates);
+          double destDistance = calculateDistance(
+              destLat,
+              destLng,
+              routeCoordinates[closestDestIndex][1],
+              routeCoordinates[closestDestIndex][0]);
 
-              // Calcular la próxima llegada simulada
-              String geojsonPath = 'assets/routes/geo/$routeId.geojson';
-              try {
-                String geojsonString = await rootBundle.loadString(geojsonPath);
-                closestArrivalTime = await _findNextArrivalTimeFromGeoJson(
-                  geojsonString: geojsonString,
-                );
-
-                // Calcular la distancia total en la ruta
-                totalDistance = await calcularDistanciaTotal(
-                  originLat: originLat,
-                  originLng: originLng,
-                  destLat: destLat,
-                  destLng: destLng,
-                  routeCoordinates: geoRoutesFromJson(geojsonString)
-                      .features[0]
-                      .geometry
-                      .coordinates,
-                );
-
-                // Calcular el tiempo estimado total
-                totalTimeEstimate = _calcularTiempoEstimado(
-                  originLat: originLat,
-                  originLng: originLng,
-                  destLat: destLat,
-                  destLng: destLng,
-                  stopLat: stop.lat,
-                  stopLng: stop.lng,
-                  totalDistance: totalDistance ?? 0,
-                );
-              } catch (e) {
-                print('No se pudo cargar el archivo $geojsonPath: $e');
-              }
-            }
-
-            double distanceToDest =
-                calculateDistance(destLat, destLng, stop.lat, stop.lng);
-            if (distanceToDest <= proximityRadius) {
-              hasDestStop = true;
-
-              // Aquí llenamos la descripción y coordenadas de la parada de destino
-              // route.destinationStopDescription = stop.description;
-              route.destStopLat = stop.lat;
-              route.destStopLng = stop.lng;
-            }
-
-            if (hasOriginStop && hasDestStop) {
-              break;
-            }
+          // Validar si el origen y el destino están dentro del radio de proximidad
+          if (originDistance <= proximityRadius) {
+            hasValidOrigin = true;
+            route.originStopLat = routeCoordinates[closestOriginIndex][1];
+            route.originStopLng = routeCoordinates[closestOriginIndex][0];
           }
-        }
 
-        if (hasOriginStop && hasDestStop) {
-          // Actualizamos la ruta con los datos de agencia y la próxima llegada
-          filteredRoutes.add(Routes(
-            id: route.id,
-            name: route.name,
-            stops: route.stops,
-            from: route.from,
-            to: route.to,
-            connections: route.connections,
-            distances: route.distances,
-            agencyName: route.agencyName,
-            nextArrivalTime: closestArrivalTime ?? 'No disponible',
-            distanceToDisplay:
-                totalDistance?.toStringAsFixed(2) ?? 'No disponible',
-            totalEstimatedTime: totalTimeEstimate ?? 'No disponible',
+          if (destDistance <= proximityRadius) {
+            hasValidDest = true;
+            route.destStopLat = routeCoordinates[closestDestIndex][1];
+            route.destStopLng = routeCoordinates[closestDestIndex][0];
+          }
 
-            // Nuevos campos
-            originStopLat: route.originStopLat,
-            originStopLng: route.originStopLng,
-            destStopLat: route.destStopLat,
-            destStopLng: route.destStopLng,
-          ));
+          if (hasValidOrigin && hasValidDest) {
+            // Calcular la distancia total de la ruta entre origen y destino
+            totalDistance = await calcularDistanciaTotal(
+              originLat: originLat,
+              originLng: originLng,
+              destLat: destLat,
+              destLng: destLng,
+              routeCoordinates: routeCoordinates,
+            );
+
+            // Calcular el tiempo estimado
+            totalTimeEstimate = _calcularTiempoEstimado(
+              originLat: originLat,
+              originLng: originLng,
+              destLat: destLat,
+              destLng: destLng,
+              stopLat: route.originStopLat!,
+              stopLng: route.originStopLng!,
+              totalDistance: totalDistance ?? 0,
+            );
+
+            // Simular la próxima hora de llegada
+            closestArrivalTime = await _findNextArrivalTimeFromGeoJson(
+              geojsonString: geojsonString,
+            );
+
+            // Agregar la ruta a la lista filtrada
+            filteredRoutes.add(Routes(
+              id: route.id,
+              name: route.name,
+              stops: route.stops,
+              from: route.from,
+              to: route.to,
+              connections: route.connections,
+              distances: route.distances,
+              agencyName: route.agencyName,
+              nextArrivalTime: closestArrivalTime ?? 'No disponible',
+              distanceToDisplay:
+                  totalDistance?.toStringAsFixed(2) ?? 'No disponible',
+              totalEstimatedTime: totalTimeEstimate ?? 'No disponible',
+
+              // Nuevos campos
+              originStopLat: route.originStopLat,
+              originStopLng: route.originStopLng,
+              destStopLat: route.destStopLat,
+              destStopLng: route.destStopLng,
+            ));
+          }
+        } catch (e) {
+          print('Error al procesar el archivo geojson: $e');
         }
       }
 
       return filteredRoutes;
     } catch (e) {
-      // print('Error in getAllRoutes: $e');
       throw Exception('Error al cargar y filtrar las rutas: $e');
     }
   }

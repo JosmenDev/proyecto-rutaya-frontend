@@ -38,6 +38,8 @@ import 'package:indriver_clone_flutter/src/domain/repository/GeolocatorRepositor
     as _i323;
 import 'package:indriver_clone_flutter/src/domain/repository/RoutesRepository.dart'
     as _i711;
+import 'package:indriver_clone_flutter/src/domain/repository/SocketRepository.dart'
+    as _i416;
 import 'package:indriver_clone_flutter/src/domain/repository/UsersRepository.dart'
     as _i377;
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart'
@@ -48,9 +50,12 @@ import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/Geolocator
     as _i234;
 import 'package:indriver_clone_flutter/src/domain/useCases/routes-suggested/RoutesUseCases.dart'
     as _i196;
+import 'package:indriver_clone_flutter/src/domain/useCases/socket/SocketUseCases.dart'
+    as _i337;
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UsersUseCases.dart'
     as _i602;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:socket_io_client/socket_io_client.dart' as _i414;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -66,6 +71,8 @@ extension GetItInjectableX on _i174.GetIt {
     final appModule = _$AppModule();
     gh.factory<_i216.SharefPref>(() => appModule.sharefPref);
     gh.factoryAsync<String>(() => appModule.token);
+    gh.factory<_i414.Socket>(() => appModule.socket);
+    gh.factory<_i416.SocketRepository>(() => appModule.socketRepository);
     gh.factory<_i231.AuthService>(() => appModule.authService);
     gh.factory<_i920.UsersService>(() => appModule.usersService);
     gh.factory<_i554.AuthRepository>(() => appModule.authRepository);
@@ -85,6 +92,7 @@ extension GetItInjectableX on _i174.GetIt {
         () => appModule.clientRequestRepository);
     gh.factory<_i231.AuthUseCases>(() => appModule.authUseCases);
     gh.factory<_i602.UsersUseCases>(() => appModule.usersUseCases);
+    gh.factory<_i337.SocketUseCases>(() => appModule.socketUseCases);
     gh.factory<_i234.GeolocatorUseCases>(() => appModule.geolocatorUseCases);
     gh.factory<_i232.ClientRequestUseCases>(
         () => appModule.clientRequestUseCases);

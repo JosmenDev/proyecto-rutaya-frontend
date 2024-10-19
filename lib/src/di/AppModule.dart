@@ -1,3 +1,4 @@
+import 'package:indriver_clone_flutter/src/data/api/ApiConfig.dart';
 import 'package:indriver_clone_flutter/src/data/dataSource/local/SharefPref.dart';
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/AgencyRoutesService.dart';
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/AuthService.dart';
@@ -12,12 +13,14 @@ import 'package:indriver_clone_flutter/src/data/repository/AuthRepositoryImpl.da
 import 'package:indriver_clone_flutter/src/data/repository/ClienteRequestRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/data/repository/GeolocatorRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/data/repository/RoutesRepositoryImpl.dart';
+import 'package:indriver_clone_flutter/src/data/repository/SocketRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/data/repository/UsersRepositoryImpl.dart';
 import 'package:indriver_clone_flutter/src/domain/models/AuthResponse.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/AuthRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/ClientRequestRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/GeolocatorRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/RoutesRepository.dart';
+import 'package:indriver_clone_flutter/src/domain/repository/SocketRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/repository/UsersRepository.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/AuthUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/auth/LoginUseCase.dart';
@@ -29,6 +32,7 @@ import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/Clien
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/CreateClientRequestUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/GetByClientRequestUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/UpdateRouteSelectUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/UpdateStatusClientRequestUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/getTimeAndDistanceUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/CreateMarketUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/FindPositionUseCase.dart';
@@ -36,11 +40,17 @@ import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/Geolocator
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetMarkerUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetPlacemarkDataUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetPolylineUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetPolylineWalkingUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/geolocator/GetPositionStreamUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/routes-suggested/GetRoutesSuggetedUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/routes-suggested/RoutesUseCases.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/socket/ConnectSocketUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/socket/DisconnectSocketUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/socket/SocketUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UpdateUserUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/users/UsersUseCases.dart';
 import 'package:injectable/injectable.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 @module
 abstract class AppModule {
@@ -59,6 +69,17 @@ abstract class AppModule {
     // print(token);
     return token;
   }
+
+  @injectable
+  Socket get socket => io(
+      'http://${ApiConfig.API_PROJECT}',
+      OptionBuilder()
+          .setTransports(['websocket']) // for Flutter or Dart VM
+          .disableAutoConnect() // disable auto-connection
+          .build());
+
+  @injectable
+  SocketRepository get socketRepository => SocketRepositoryImpl(socket);
 
   @injectable
   AuthService get authService => AuthService();
@@ -121,12 +142,20 @@ abstract class AppModule {
       UsersUseCases(update: UpdateUserUseCase(usersRepository));
 
   @injectable
+  SocketUseCases get socketUseCases => SocketUseCases(
+        connect: ConnectSocketUseCase(socketRepository),
+        disconnect: DisconnectSocketUseCase(socketRepository),
+      );
+
+  @injectable
   GeolocatorUseCases get geolocatorUseCases => GeolocatorUseCases(
         findPosition: FindPositionUseCase(geoLocatorRepository),
         createMarket: CreateMarketUseCase(geoLocatorRepository),
         getMarker: GetMarkerUseCase(geoLocatorRepository),
         getPlacemarkData: GetPlacemarkDataUseCase(geoLocatorRepository),
         getPolyLine: GetPolyLineUseCase(geoLocatorRepository),
+        getPositionStream: GetPositionStreamUseCase(geoLocatorRepository),
+        getPolyLineWalking: GetPolyLineWalkingUseCase(geoLocatorRepository),
       );
 
   @injectable
@@ -136,6 +165,8 @@ abstract class AppModule {
         getTimeAndDistance: GetTimeAndDistanceUseCase(clientRequestRepository),
         updateRouteSelect: UpdateRouteSelectUseCase(clientRequestRepository),
         getByClientRequest: GetByClientRequestUseCase(clientRequestRepository),
+        updateStatusClientRequest:
+            UpdateStatusClientRequestUseCase(clientRequestRepository),
       );
 
   // **Registrar RoutesUseCases**
