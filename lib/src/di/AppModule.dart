@@ -31,6 +31,7 @@ import 'package:indriver_clone_flutter/src/domain/useCases/auth/getUserSessionUs
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/ClientRequestUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/CreateClientRequestUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/GetByClientRequestUseCase.dart';
+import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/GetByClientTripsHistoryUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/UpdateRouteSelectUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/UpdateStatusClientRequestUseCase.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/getTimeAndDistanceUseCase.dart';
@@ -167,6 +168,8 @@ abstract class AppModule {
         getByClientRequest: GetByClientRequestUseCase(clientRequestRepository),
         updateStatusClientRequest:
             UpdateStatusClientRequestUseCase(clientRequestRepository),
+        getByClientTripsHistory:
+            GetByClientTripsHistoryUseCase(clientRequestRepository),
       );
 
   // **Registrar RoutesUseCases**

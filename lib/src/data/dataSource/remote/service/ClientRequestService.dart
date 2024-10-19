@@ -113,6 +113,26 @@ class ClientRequestService {
     }
   }
 
+  Future<Resource<List<ClientRequest>>> getByClientTripsHistory(
+      int idClient) async {
+    try {
+      Uri url =
+          Uri.http(ApiConfig.API_PROJECT, 'client-requests/client/${idClient}');
+      Map<String, String> headers = {'Content-Type': 'application/json'};
+      final response = await http.get(url, headers: headers);
+      final data = json.decode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        List<ClientRequest> clientRequest = ClientRequest.fromJsonList(data);
+        return Success(clientRequest);
+      } else {
+        return ErrorData(listToString(data['message']));
+      }
+    } catch (e) {
+      print('Error $e');
+      return ErrorData(e.toString());
+    }
+  }
+
   Future<Resource<bool>> updateStatus(
     int idClientRequest,
     StatusTrip statusTrip,

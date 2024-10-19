@@ -18,6 +18,7 @@ import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/b
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/Bloc/MapTripBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesEvent.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/tripHistory/bloc/TripHistoryBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/info/bloc/ProfileInfoBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/info/bloc/ProfileInfoEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/update/bloc/ProfileUpdateBloc.dart';
@@ -58,5 +59,9 @@ List<BlocProvider> blocProviders = [
         locator<ClientRequestUseCases>(),
         locator<GeolocatorUseCases>(),
         locator<AuthUseCases>()),
+  ),
+  BlocProvider<TripHistoryBloc>(
+    create: (context) => TripHistoryBloc(
+        locator<ClientRequestUseCases>(), locator<AuthUseCases>()),
   ),
 ];

@@ -7,6 +7,7 @@ import 'package:indriver_clone_flutter/src/presentation/pages/client/home/bloc/C
 import 'package:indriver_clone_flutter/src/presentation/pages/client/home/bloc/ClientHomeEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/home/bloc/ClientHomeState.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/ClientMapSeekerPage.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/tripHistory/TripHistoryPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/info/ProfileInfoPage.dart';
 
 class ClientHomePage extends StatefulWidget {
@@ -20,6 +21,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
   List<Widget> pageList = <Widget>[
     ClientMapSeekerPage(),
     ProfileInfoPage(),
+    TripHistoryPage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -101,6 +103,16 @@ class _ClientHomePageState extends State<ClientHomePage> {
                     context
                         .read<ClientHomeBloc>()
                         .add(ChangeDrawePage(pageIndex: 1));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Historial de Viajes'),
+                  selected: state.pageIndex == 2,
+                  onTap: () {
+                    context
+                        .read<ClientHomeBloc>()
+                        .add(ChangeDrawePage(pageIndex: 2));
                     Navigator.pop(context);
                   },
                 ),

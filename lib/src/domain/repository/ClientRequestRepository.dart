@@ -27,6 +27,8 @@ abstract class ClientRequestRepository {
 
   Future<Resource<ClientRequest>> getByClientRequest(int idClientRequest);
 
+  Future<Resource<List<ClientRequest>>> getByClientTripsHistory(int idClient);
+
   Future<Resource<bool>> updateStatus(
       int idClientRequest, StatusTrip statusTrip);
 }

@@ -62,4 +62,10 @@ class ClienteRequestRepositoryImpl implements ClientRequestRepository {
       int idClientRequest, StatusTrip statusTrip) {
     return clientRequestService.updateStatus(idClientRequest, statusTrip);
   }
+
+  @override
+  Future<Resource<List<ClientRequest>>> getByClientTripsHistory(int idClient) {
+    // TODO: implement getByClientTripsHistory
+    return clientRequestService.getByClientTripsHistory(idClient);
+  }
 }
