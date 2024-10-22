@@ -12,17 +12,30 @@ class FinalizationTripPage extends StatefulWidget {
 
 class _FinalizationTripPageState extends State<FinalizationTripPage> {
   ClientRequest? clientRequest;
+  String? duration;
+
   @override
   Widget build(BuildContext context) {
-    clientRequest = ModalRoute.of(context)?.settings.arguments as ClientRequest;
+    // Recibir los argumentos como un Map
+    final Map<String, dynamic> arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+
+    // Extraer los valores del Map
+    clientRequest = arguments['clientRequest'] as ClientRequest?;
+    duration = arguments['duration'] as String?;
+
     return Scaffold(
       body: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.topLeft,
-                  colors: [Colors.cyan, celeste])),
-          child: Finalizationtripcontent(clientRequest)),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.topLeft,
+            colors: [Colors.cyan, celeste],
+          ),
+        ),
+        // Pasar tanto clientRequest como duration al widget Finalizationtripcontent
+        child: FinalizationTripContent(clientRequest, duration),
+      ),
     );
   }
 }

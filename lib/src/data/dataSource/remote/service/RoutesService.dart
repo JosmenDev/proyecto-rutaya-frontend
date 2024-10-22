@@ -4,7 +4,6 @@ import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/Agency
 import 'package:indriver_clone_flutter/src/data/dataSource/remote/service/StopsService.dart';
 import 'package:indriver_clone_flutter/src/domain/models/Routes.dart';
 import 'package:indriver_clone_flutter/src/domain/models/Stops.dart';
-import 'package:indriver_clone_flutter/src/domain/models/GeoRoutes.dart'; // Modelo para el geojson
 
 class RoutesService {
   final AgencyRoutesService agencyRoutesService;
@@ -33,7 +32,7 @@ class RoutesService {
           await rootBundle.loadString('assets/routes/routes.json');
       List<Routes> routesList = RoutesFromJson(jsonString);
 
-      // Cargar las paradas de la base de datos
+      // Cargar las paradas de la base de datos desde stops.json
       final Map<String, Stops> stopsMap = await stopsService.getAllStops();
 
       List<Routes> filteredRoutes = [];
@@ -55,52 +54,43 @@ class RoutesService {
         double? totalDistance;
         String? totalTimeEstimate;
 
-        // Obtener las coordenadas del trayecto de la ruta desde el archivo geojson
-        String geojsonPath = 'assets/routes/geo/$routeId.geojson';
         try {
-          String geojsonString = await rootBundle.loadString(geojsonPath);
-          final routeCoordinates =
-              geoRoutesFromJson(geojsonString).features[0].geometry.coordinates;
+          // Encontrar la parada más cercana al origen del usuario
+          Stops closestOriginStop = _findClosestStop(
+              originLat, originLng, stopsMap, route.id.toString());
+          double originDistance = calculateDistance(originLat, originLng,
+              closestOriginStop.lat, closestOriginStop.lng);
 
-          // Encontrar el punto más cercano al origen del usuario
-          int closestOriginIndex = _findClosestCoordinateIndex(
-              originLat, originLng, routeCoordinates);
-          double originDistance = calculateDistance(
-              originLat,
-              originLng,
-              routeCoordinates[closestOriginIndex][1],
-              routeCoordinates[closestOriginIndex][0]);
-
-          // Encontrar el punto más cercano al destino del usuario
-          int closestDestIndex =
-              _findClosestCoordinateIndex(destLat, destLng, routeCoordinates);
+          // Encontrar la parada más cercana al destino del usuario
+          Stops closestDestStop =
+              _findClosestStop(destLat, destLng, stopsMap, route.id.toString());
           double destDistance = calculateDistance(
-              destLat,
-              destLng,
-              routeCoordinates[closestDestIndex][1],
-              routeCoordinates[closestDestIndex][0]);
+              destLat, destLng, closestDestStop.lat, closestDestStop.lng);
 
           // Validar si el origen y el destino están dentro del radio de proximidad
           if (originDistance <= proximityRadius) {
             hasValidOrigin = true;
-            route.originStopLat = routeCoordinates[closestOriginIndex][1];
-            route.originStopLng = routeCoordinates[closestOriginIndex][0];
+            route.originStopLat = closestOriginStop.lat;
+            route.originStopLng = closestOriginStop.lng;
           }
 
           if (destDistance <= proximityRadius) {
             hasValidDest = true;
-            route.destStopLat = routeCoordinates[closestDestIndex][1];
-            route.destStopLng = routeCoordinates[closestDestIndex][0];
+            route.destStopLat = closestDestStop.lat;
+            route.destStopLng = closestDestStop.lng;
           }
 
           if (hasValidOrigin && hasValidDest) {
-            // Calcular la distancia total de la ruta entre origen y destino
+            // Calcular la distancia total de la ruta entre origen y destino usando las paradas más cercanas
             totalDistance = await calcularDistanciaTotal(
-              originLat: originLat,
-              originLng: originLng,
-              destLat: destLat,
-              destLng: destLng,
-              routeCoordinates: routeCoordinates,
+              originLat: route.originStopLat!,
+              originLng: route.originStopLng!,
+              destLat: route.destStopLat!,
+              destLng: route.destStopLng!,
+              routeStops: [
+                closestOriginStop,
+                closestDestStop
+              ], // Lista de las paradas
             );
 
             // Calcular el tiempo estimado
@@ -115,9 +105,7 @@ class RoutesService {
             );
 
             // Simular la próxima hora de llegada
-            closestArrivalTime = await _findNextArrivalTimeFromGeoJson(
-              geojsonString: geojsonString,
-            );
+            closestArrivalTime = _calculateArrivalTime();
 
             // Agregar la ruta a la lista filtrada
             filteredRoutes.add(Routes(
@@ -142,11 +130,11 @@ class RoutesService {
             ));
           }
         } catch (e) {
-          print('Error al procesar el archivo geojson: $e');
+          print('Error al procesar la ruta: $e');
         }
       }
 
-      return filteredRoutes;
+      return filteredRoutes.reversed.toList();
     } catch (e) {
       throw Exception('Error al cargar y filtrar las rutas: $e');
     }
@@ -162,9 +150,10 @@ class RoutesService {
     required double stopLng,
     required double totalDistance,
   }) {
-    // Velocidades aproximadas
-    double walkingSpeed = 5; // km/h
-    double transitSpeed = 20; // km/h
+    // Velocidades ajustadas para hacer el cálculo más realista
+    double walkingSpeed = 4; // km/h (ajuste a velocidad promedio de caminata)
+    double transitSpeed =
+        15; // km/h (ajuste a velocidad promedio de transporte público)
 
     // Distancia desde el origen a la parada más cercana (caminando)
     double walkingToStopDistance =
@@ -177,158 +166,80 @@ class RoutesService {
     double transitDistance = totalDistance / 1000; // en km
     double transitTime = transitDistance / transitSpeed * 60; // en minutos
 
-    // Distancia desde la parada de destino hasta el destino final (caminando)
-    // double walkingToDestDistance = calculateDistance(stopLat, stopLng, destLat, destLng) / 1000; // en km
-    // double walkingToDestTime = walkingToDestDistance / walkingSpeed * 60; // en minutos
-
     // Tiempo total estimado
     double totalTime = walkingToStopTime + transitTime;
 
     return totalTime.toStringAsFixed(0);
   }
 
-  // Método para encontrar la próxima hora de llegada basándose en el archivo .geojson
-  Future<String?> _findNextArrivalTimeFromGeoJson({
-    required String geojsonString,
-  }) async {
-    try {
-      // Cargar el archivo .geojson
-      final geojson = geoRoutesFromJson(geojsonString);
-
-      // Extraer las propiedades necesarias del archivo .geojson
-      String openingHours = geojson.features[0].properties.openingHours;
-
-      // Llamar a la función que realiza el cálculo del tiempo de llegada aproximado
-      return _calculateArrivalTime(
-        openingHours: openingHours,
-      );
-    } catch (e) {
-      // print('Error al calcular la hora de llegada desde geojson: $e');
-      return null;
-    }
-  }
-
-  // Función para calcular la hora de llegada simulada
-  String? _calculateArrivalTime({
-    required String openingHours,
-  }) {
-    // Hora actual en la zona horaria de Perú (UTC-5)
-    final now = DateTime.now().toUtc().subtract(Duration(hours: 5));
-
-    // Parsear el horario de apertura y cierre en la hora de Perú
-    DateTime startTime = _parseTimeFromOpeningHours(openingHours, 'start')
-        .toUtc()
-        .subtract(Duration(hours: 5));
-    DateTime endTime = _parseTimeFromOpeningHours(openingHours, 'end')
-        .toUtc()
-        .subtract(Duration(hours: 5));
-
-    // print('Horario de apertura (hora Perú): $startTime');
-    // print('Horario de cierre (hora Perú): $endTime');
-    // print('Hora actual (hora Perú): $now');
-
-    // Verificar si la hora actual está antes del inicio del servicio
-    if (now.isBefore(startTime)) {
-      // print('La hora actual está antes del inicio del servicio');
-      return 'Fuera de servicio';
-    }
-
-    // Si la hora está después del cierre del servicio, forzamos una llegada simulada
-    if (now.isAfter(endTime)) {
-      // print(
-      // 'La hora actual está después del cierre del servicio, forzando llegada simulada');
-      DateTime simulatedArrival = now.add(Duration(minutes: 15));
-      return simulatedArrival.toIso8601String(); // Simulamos la llegada
-    }
-
-    // Si está dentro del horario de servicio, generamos un tiempo de llegada entre 1 y 15 minutos
+  // Simulación de la próxima hora de llegada basada en el tiempo actual
+  String _calculateArrivalTime() {
+    final now = DateTime.now();
     int randomMinutes = Random().nextInt(15) + 1; // Genera entre 1 y 15 minutos
     DateTime nextArrival = now.add(Duration(minutes: randomMinutes));
 
-    // print('Hora estimada de llegada: $nextArrival');
-    return _formatearHora(
-        nextArrival); // Devolvemos la hora de llegada simulada
+    // Devolver la hora de llegada estimada
+    return _formatearHora(nextArrival);
   }
 
+  // Método para encontrar la parada más cercana a una ubicación específica dentro de una ruta específica
+  Stops _findClosestStop(
+      double lat, double lng, Map<String, Stops> stopsMap, String routeId) {
+    double minDistance = double.infinity;
+    Stops? closestStop;
+
+    stopsMap.forEach((key, stop) {
+      // Revisar si la parada está en la ruta actual
+      bool isStopInRoute =
+          stop.routes.any((route) => route.route.toString() == routeId);
+
+      if (isStopInRoute) {
+        double distance = calculateDistance(lat, lng, stop.lat, stop.lng);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestStop = stop;
+        }
+      }
+    });
+
+    return closestStop!;
+  }
+
+  // Cálculo de la distancia total entre origen y destino utilizando las paradas más cercanas
   Future<double> calcularDistanciaTotal({
     required double originLat,
     required double originLng,
     required double destLat,
     required double destLng,
-    required List<List<double>> routeCoordinates,
+    required List<Stops> routeStops,
   }) async {
     double totalDistance = 0.0;
 
-    // Encontrar las coordenadas más cercanas al origen y destino
-    int closestIndexToOrigin =
-        _findClosestCoordinateIndex(originLat, originLng, routeCoordinates);
-    int closestIndexToDest =
-        _findClosestCoordinateIndex(destLat, destLng, routeCoordinates);
-
-    // Si el índice del origen es mayor que el del destino, intercambiar
-    if (closestIndexToOrigin > closestIndexToDest) {
-      int temp = closestIndexToOrigin;
-      closestIndexToOrigin = closestIndexToDest;
-      closestIndexToDest = temp;
-    }
-
-    // Calcular la distancia total entre el origen y el destino pasando por las paradas
-    for (int i = closestIndexToOrigin; i < closestIndexToDest; i++) {
-      double lat1 = routeCoordinates[i][1];
-      double lng1 = routeCoordinates[i][0];
-      double lat2 = routeCoordinates[i + 1][1];
-      double lng2 = routeCoordinates[i + 1][0];
-      totalDistance += calculateDistance(lat1, lng1, lat2, lng2);
+    for (int i = 0; i < routeStops.length - 1; i++) {
+      totalDistance += calculateDistance(
+        routeStops[i].lat,
+        routeStops[i].lng,
+        routeStops[i + 1].lat,
+        routeStops[i + 1].lng,
+      );
     }
 
     return totalDistance;
   }
 
-  // Función que encuentra la coordenada más cercana
-  int _findClosestCoordinateIndex(
-      double originLat, double originLng, List<List<double>> coordinates) {
-    double minDistance = double.infinity;
-    int closestIndex = 0;
-
-    for (int i = 0; i < coordinates.length; i++) {
-      double coordLat = coordinates[i][1];
-      double coordLng = coordinates[i][0];
-      double distance =
-          calculateDistance(originLat, originLng, coordLat, coordLng);
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIndex = i;
-      }
-    }
-
-    return closestIndex;
-  }
-
-  // Parsear horario de apertura y cierre
-  DateTime _parseTimeFromOpeningHours(String openingHours, String type) {
-    final timeRange = openingHours.split(' ')[1];
-    final startEnd = timeRange.split('-');
-    final selectedTime = (type == 'start') ? startEnd[0] : startEnd[1];
-
-    final now = DateTime.now();
-    return DateTime.parse(
-        "${now.toIso8601String().split('T').first}T$selectedTime:00");
-  }
-
-  // Cálculo de distancia entre dos puntos geográficos usando fórmula haversine
+  // Cálculo de distancia entre dos puntos geográficos usando la fórmula de Haversine
   double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
     const double R = 6371e3; // Radio de la Tierra en metros
-    final double phi1 = lat1 * (3.14159 / 180); // φ, λ en radianes
-    final double phi2 = lat2 * (3.14159 / 180);
-    final double deltaPhi = (lat2 - lat1) * (3.14159 / 180);
-    final double deltaLambda = (lng2 - lng1) * (3.14159 / 180);
+    final double phi1 = lat1 * (pi / 180); // Convertir latitud a radianes
+    final double phi2 = lat2 * (pi / 180);
+    final double deltaPhi = (lat2 - lat1) * (pi / 180);
+    final double deltaLambda = (lng2 - lng1) * (pi / 180);
 
-    final double a = (sin(deltaPhi / 2) * sin(deltaPhi / 2)) +
-        (cos(phi1) * cos(phi2) * sin(deltaLambda / 2) * sin(deltaLambda / 2));
+    final double a = sin(deltaPhi / 2) * sin(deltaPhi / 2) +
+        cos(phi1) * cos(phi2) * sin(deltaLambda / 2) * sin(deltaLambda / 2);
     final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
-    final double distance = R * c; // En metros
+    final double distance = R * c; // Distancia en metros
     return distance;
   }
 

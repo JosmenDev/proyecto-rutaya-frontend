@@ -22,6 +22,7 @@ class ClientRequest {
   double? destinationStopLng;
   double? tarifaRoute;
   double? distanceRoute;
+  String? timeRoute;
   String? durationRoute;
   String? date;
 
@@ -42,6 +43,7 @@ class ClientRequest {
     this.destinationStopLng,
     this.tarifaRoute,
     this.distanceRoute,
+    this.timeRoute,
     this.durationRoute,
     this.date,
   });
@@ -88,6 +90,7 @@ class ClientRequest {
         distanceRoute: json["distance_route"] != null
             ? double.parse(json["distance_route"].toString())
             : null,
+        timeRoute: json["time_route"]?.toString(),
         durationRoute: json["duration"]?.toString(),
         date: json["date"]?.toString(),
       );
@@ -110,6 +113,7 @@ class ClientRequest {
         "tarifa_route": tarifaRoute,
         "distance_route": distanceRoute,
         "duration": durationRoute,
+        "time_route": timeRoute,
         "date": date,
       };
 

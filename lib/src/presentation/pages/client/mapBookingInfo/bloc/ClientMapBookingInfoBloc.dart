@@ -85,7 +85,8 @@ class ClientMapBookingInfoBloc
       }
 
       try {
-        GoogleMapController googleMapController = await state.controller.future;
+        GoogleMapController googleMapController =
+            await state.controller!.future;
         googleMapController.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(

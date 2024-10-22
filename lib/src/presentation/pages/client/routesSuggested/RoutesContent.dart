@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/colors/colors.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesBloc.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesEvent.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesState.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/bloc/RoutesBloc.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/bloc/RoutesEvent.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/bloc/RoutesState.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultIconBack.dart';
+import 'package:lottie/lottie.dart';
 
 class RoutesContent extends StatelessWidget {
   final String idClientRequest;
@@ -83,7 +84,29 @@ class RoutesContent extends StatelessWidget {
                 builder: (context, state) {
                   if (state.isLoading) {
                     // Mostrar indicador de carga mientras se cargan las rutas
-                    return Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Cargar la animación Lottie
+                          Lottie.asset(
+                            'assets/lottie/lottie_loading_route.json', // Ruta a tu animación
+                            width: 300,
+                            height: 300,
+                            fit: BoxFit.cover,
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            'Estamos preparando las mejores opciones para ti',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   } else if (state.errorMessage != null) {
                     // Mostrar mensaje de error si ocurre un problema al cargar las rutas
                     return Center(child: Text(state.errorMessage!));
@@ -97,8 +120,7 @@ class RoutesContent extends StatelessWidget {
                         // print('ID CLIENT REQUEST: $idClientRequest');
                         // print('Route $index: $route');
                         final String quotedText =
-                            extractQuotedText(route.name) ??
-                                'Nombre no disponible';
+                            extractQuotedText(route.name) ?? '';
                         return RouteCard(
                           routeName: '${route.agencyName} $quotedText',
                           estimatedTime:

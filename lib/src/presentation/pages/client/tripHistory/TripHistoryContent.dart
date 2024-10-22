@@ -59,6 +59,7 @@ class TripHistoryContent extends StatelessWidget {
   }
 
   // Iconos de transporte
+  // Iconos de transporte
   Widget _buildTransportIcons() {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -76,15 +77,28 @@ class TripHistoryContent extends StatelessWidget {
             children: [
               Icon(Icons.directions_walk, size: 24, color: Colors.grey[600]),
               Icon(Icons.chevron_right, size: 24, color: Colors.grey[600]),
-              Column(
-                children: [
-                  Icon(Icons.directions_bus, size: 24, color: Colors.grey[600]),
-                  Text(
-                    clientRequest.agencyLongName!,
-                    style: TextStyle(fontSize: 12),
-                  )
-                ],
+
+              // Uso de Flexible para que el nombre de la agencia sea responsive
+              Flexible(
+                child: Column(
+                  children: [
+                    Icon(Icons.directions_bus,
+                        size: 24, color: Colors.grey[600]),
+
+                    // Texto del nombre de la agencia con tamaño relativo
+                    Text(
+                      clientRequest.agencyLongName!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12),
+                      maxLines: 2, // Limitar a 2 líneas
+                      overflow: TextOverflow
+                          .ellipsis, // Cortar con puntos suspensivos si es largo
+                      softWrap: true, // Ajustar el texto a nuevas líneas
+                    ),
+                  ],
+                ),
               ),
+
               Icon(Icons.chevron_right, size: 24, color: Colors.grey[600]),
               Icon(Icons.directions_walk, size: 24, color: Colors.grey[600]),
             ],
@@ -99,7 +113,8 @@ class TripHistoryContent extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildDetailItem('Tiempo empleado', '18 min'),
+        _buildDetailItem(
+            'Tiempo empleado', '${clientRequest.durationRoute} min'),
         _buildDetailItem('Distancia', '${clientRequest.distanceRoute} m'),
         _buildDetailItem('Tarifa', '${clientRequest.tarifaRoute} PEN'),
       ],

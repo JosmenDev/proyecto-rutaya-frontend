@@ -98,6 +98,7 @@ class RegisterContent extends StatelessWidget {
                       type: TextInputType.text,
                       obscureText: true,
                     ),
+                    SizedBox(height: size.height * 0.02),
                     Defaultbutton(
                         size: size,
                         onPressed: () {

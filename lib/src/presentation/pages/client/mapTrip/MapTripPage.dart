@@ -1,12 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indriver_clone_flutter/src/domain/models/ClientRequest.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/Bloc/MapTripBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/Bloc/MapTripEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/Bloc/MapTripState.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/MapTripContent.dart';
+import 'package:lottie/lottie.dart';
 
 class MapTripPage extends StatefulWidget {
   const MapTripPage({super.key});
@@ -17,6 +18,8 @@ class MapTripPage extends StatefulWidget {
 
 class _MapTripPageState extends State<MapTripPage> {
   String? idClientRequest;
+  Timer? _timer;
+  int _secondsElapsed = 0; // Variable para contar los segundos
 
   @override
   void initState() {
@@ -27,9 +30,39 @@ class _MapTripPageState extends State<MapTripPage> {
         context.read<MapTripBloc>().add(MapTripInitEvent());
         context.read<MapTripBloc>().add(
             GetClientRequest(idClientRequest: int.parse(idClientRequest!)));
-        // context.read<MapTripBloc>().add(ListenTripPosition());
       }
+      // Iniciar el temporizador
+      _startTimer();
     });
+  }
+
+  // Método para iniciar el temporizador
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _secondsElapsed++; // Incrementar el contador cada segundo
+      });
+    });
+  }
+
+  // Método para detener el temporizador
+  void _stopTimer() {
+    _timer?.cancel();
+  }
+
+  // Función para formatear el tiempo en MM:ss
+  String formatTime(int secondsElapsed) {
+    int minutes = secondsElapsed ~/ 60;
+    int seconds = secondsElapsed % 60;
+    String minutesStr = minutes.toString().padLeft(2, '0');
+    String secondsStr = seconds.toString().padLeft(2, '0');
+    return '$minutesStr:$secondsStr';
+  }
+
+  @override
+  void dispose() {
+    _stopTimer(); // Detener el temporizador cuando se destruye el widget
+    super.dispose();
   }
 
   @override
@@ -37,6 +70,7 @@ class _MapTripPageState extends State<MapTripPage> {
     final Map<String, dynamic> arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     idClientRequest = arguments['idClientRequest'];
+
     return Scaffold(
       body: BlocListener<MapTripBloc, MapTripState>(
         listener: (context, state) {
@@ -44,13 +78,8 @@ class _MapTripPageState extends State<MapTripPage> {
           if (responseClientRequest is Success) {
             final data = responseClientRequest.data as ClientRequest;
             print('ClientRequestResponse: ${data.toJson()}');
-            // context
-            //     .read<MapTripBloc>()
-            //     .add(AddMarketPickup(lat: data.pickupLat, lng: data.pickupLng));
           } else if (responseClientRequest is ErrorData) {
-            Fluttertoast.showToast(
-                msg: responseClientRequest.message,
-                toastLength: Toast.LENGTH_LONG);
+            // Manejar error
           }
         },
         child: BlocBuilder<MapTripBloc, MapTripState>(
@@ -58,12 +87,35 @@ class _MapTripPageState extends State<MapTripPage> {
             final responseClientRequest = state.responseGetClientRequest;
             if (responseClientRequest is Success) {
               final data = responseClientRequest.data as ClientRequest;
-              print('ClientRequestResponse: ${data.toJson()}');
-              return MapTripContent(state, data, null);
+              return MapTripContent(
+                state,
+                data,
+                formatTime(
+                    _secondsElapsed), // Pasar el tiempo formateado al contenido
+              );
             }
-            return Container(
-              child: Center(
-                child: Text('Error al cargar mapa'),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Cargar la animación Lottie
+                  Lottie.asset(
+                    'assets/lottie/lottie_not_history_trip.json', // Ruta a tu animación
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'El mapa tardó en cargar, regresa y vuelve a intentarlo',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
               ),
             );
           },

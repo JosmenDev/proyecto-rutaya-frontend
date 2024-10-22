@@ -3,18 +3,23 @@ import 'package:indriver_clone_flutter/src/domain/models/ClientRequest.dart';
 import 'package:indriver_clone_flutter/src/presentation/colors/colors.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultButton.dart';
 
-class Finalizationtripcontent extends StatelessWidget {
-  ClientRequest? clientRequest;
+class FinalizationTripContent extends StatelessWidget {
+  final ClientRequest? clientRequest;
+  final String? duration; // Añadir este campo para recibir la duración
 
-  Finalizationtripcontent(this.clientRequest);
+  // Actualiza el constructor para recibir ambos argumentos
+  FinalizationTripContent(this.clientRequest, this.duration);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return Center(
       child: Container(
         margin: EdgeInsets.symmetric(
-            horizontal: size.width * 0.05, vertical: size.height * 0.17),
+          horizontal: size.width * 0.05,
+          vertical: size.height * 0.06,
+        ),
         color: Colors.white,
         padding: EdgeInsets.symmetric(horizontal: 40),
         child: Column(
@@ -43,8 +48,6 @@ class Finalizationtripcontent extends StatelessWidget {
 
   Widget _listTilePickUp() {
     return ListTile(
-      // iconColor: Colors.white,
-      // textColor: Colors.white,
       leading: Icon(Icons.location_on),
       title: Text('DESDE'),
       subtitle: Text(clientRequest!.pickupDescription ?? ''),
@@ -53,8 +56,6 @@ class Finalizationtripcontent extends StatelessWidget {
 
   Widget _listTileDestination() {
     return ListTile(
-      // iconColor: Colors.white,
-      // textColor: Colors.white,
       leading: Icon(Icons.flag),
       title: Text('HASTA'),
       subtitle: Text(clientRequest!.destinationDescription ?? ''),
@@ -63,28 +64,24 @@ class Finalizationtripcontent extends StatelessWidget {
 
   Widget _listTileAgency() {
     return ListTile(
-      // iconColor: Colors.white,
-      // textColor: Colors.white,
       leading: Icon(Icons.directions_bus_sharp),
       title: Text('AGENCIA DE MICRO'),
       subtitle: Text(clientRequest!.agencyLongName ?? ''),
     );
   }
 
+  // Mostrar el tiempo total transcurrido junto con otros datos
   Widget _listTileData() {
     return ListTile(
-      // iconColor: Colors.white,
-      // textColor: Colors.white,
-      leading: Icon(Icons.route),
+      leading: Icon(Icons.timer),
       title: Text('DATOS'),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-              'Tiempo de viaje: ${clientRequest!.durationRoute} minutos' ?? ''),
-          Text('Distancia Recorrida: ${clientRequest!.distanceRoute} metros' ??
-              ''),
-          Text('Tarifa: ${clientRequest!.tarifaRoute} PEN' ?? ''),
+              'Tiempo de viaje: $duration minutos'), // Mostrar el tiempo en MM:ss
+          Text('Distancia Recorrida: ${clientRequest!.distanceRoute} metros'),
+          Text('Tarifa: ${clientRequest!.tarifaRoute} PEN'),
         ],
       ),
     );

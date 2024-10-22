@@ -16,8 +16,8 @@ import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingI
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/bloc/ClientMapSeekerBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapSeeker/bloc/ClientMapSeekerEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/Bloc/MapTripBloc.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesBloc.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesEvent.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/bloc/RoutesBloc.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/bloc/RoutesEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/tripHistory/bloc/TripHistoryBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/info/bloc/ProfileInfoBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/info/bloc/ProfileInfoEvent.dart';

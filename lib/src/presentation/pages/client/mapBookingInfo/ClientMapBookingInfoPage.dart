@@ -26,21 +26,31 @@ class _ClientMapBookingInfoPageState extends State<ClientMapBookingInfoPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context
-          .read<ClientMapBookingInfoBloc>()
-          .add(ClientMapBookingInfoInitEvent(
-            pickUpLatLng: pickUpLatLng!,
-            destinationLatLng: destinationLatLng!,
-            pickUpDescription: pickUpDescription!,
-            destinationDescription: destinationDescription!,
-          ));
-      context.read<ClientMapBookingInfoBloc>().add(GetTimeAndDistanceValues());
-      context.read<ClientMapBookingInfoBloc>().add(AddPolyline());
-      context.read<ClientMapBookingInfoBloc>().add(ChangeMapCameraPosition(
-          lat: pickUpLatLng!.latitude, lng: pickUpLatLng!.longitude));
+      // Verificación de las coordenadas antes de proceder
+      if (pickUpLatLng == null || destinationLatLng == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text('Por favor, selecciona un punto de origen y un destino.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        context
+            .read<ClientMapBookingInfoBloc>()
+            .add(ClientMapBookingInfoInitEvent(
+              pickUpLatLng: pickUpLatLng!,
+              destinationLatLng: destinationLatLng!,
+              pickUpDescription: pickUpDescription!,
+              destinationDescription: destinationDescription!,
+            ));
+        context
+            .read<ClientMapBookingInfoBloc>()
+            .add(GetTimeAndDistanceValues());
+        context.read<ClientMapBookingInfoBloc>().add(AddPolyline());
+      }
     });
   }
 

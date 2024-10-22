@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
+import 'package:lottie/lottie.dart'; // Importa el paquete Lottie
 import 'package:indriver_clone_flutter/src/domain/models/ClientRequest.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/tripHistory/TripHistoryContent.dart';
@@ -18,7 +18,6 @@ class TripHistoryPage extends StatefulWidget {
 class _TripHistoryPageState extends State<TripHistoryPage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       context.read<TripHistoryBloc>().add(GetHistoryTrip());
@@ -36,15 +35,44 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
           );
         } else if (response is Success) {
           List<ClientRequest> data = response.data as List<ClientRequest>;
-          print('Data: ${data}');
-
+          if (data.isEmpty) {
+            // Mostrar Lottie y mensaje cuando no hay historial de viajes
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Cargar la animación Lottie
+                  Lottie.asset(
+                    'assets/lottie/lottie_not_history_trip.json', // Ruta a tu animación
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.fill,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Aún no has realizado ningún viaje',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
           return Container(
             margin: EdgeInsets.all(10),
             child: ListView.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  return TripHistoryContent(data[index]);
-                }),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                return TripHistoryContent(data[index]);
+              },
+            ),
+          );
+        } else if (response is Error) {
+          return Center(
+            child: Text('Error al cargar historial de viajes'),
           );
         }
         return Container();

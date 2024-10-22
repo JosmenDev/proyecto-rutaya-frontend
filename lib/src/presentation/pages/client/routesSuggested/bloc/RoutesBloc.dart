@@ -3,8 +3,8 @@ import 'package:indriver_clone_flutter/src/domain/models/Routes.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/client-requests/ClientRequestUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/useCases/routes-suggested/RoutesUseCases.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesEvent.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesState.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/bloc/RoutesEvent.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/bloc/RoutesState.dart';
 
 class RoutesBloc extends Bloc<RoutesEvent, RoutesState> {
   final RoutesUseCases routesUseCases;

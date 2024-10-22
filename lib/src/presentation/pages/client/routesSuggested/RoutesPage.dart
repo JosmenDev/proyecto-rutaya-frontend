@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // Importar flutter_bloc
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/RoutesContent.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesBloc.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/bloc/RoutesEvent.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/RoutesContent.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/bloc/RoutesBloc.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/bloc/RoutesEvent.dart';
 
 class RoutesPage extends StatelessWidget {
   @override

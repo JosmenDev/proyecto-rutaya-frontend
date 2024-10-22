@@ -101,14 +101,7 @@ class _ClientMapSeekerPageState extends State<ClientMapSeekerPage> {
                 child: Defaultbutton(
                   size: size,
                   onPressed: () {
-                    Navigator.pushNamed(context, 'client/map/booking',
-                        arguments: {
-                          'pickUpLatLng': state.pickUpLatLng,
-                          'destinationLatLng': state.destinationLatLng,
-                          'pickUpDescription': state.pickUpDescription,
-                          'destinationDescription':
-                              state.destinationDescription,
-                        });
+                    _validateAndProceed(context, state);
                   },
                   color:
                       celeste, // Puede que este parámetro no sea necesario, ajústalo si es el caso
@@ -214,6 +207,27 @@ class _ClientMapSeekerPageState extends State<ClientMapSeekerPage> {
         ),
       ),
     );
+  }
+
+  void _validateAndProceed(BuildContext context, ClientMapseekerState state) {
+    if (pickUpController.text.isEmpty || destinationController.text.isEmpty) {
+      // Mostrar mensaje de error si algún campo está vacío
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'Por favor ingrese tanto el lugar de origen como el lugar de destino.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else {
+      // Proceder con la navegación a la siguiente página si ambos campos tienen valor
+      Navigator.pushNamed(context, 'client/map/booking', arguments: {
+        'pickUpLatLng': state.pickUpLatLng,
+        'destinationLatLng': state.destinationLatLng,
+        'pickUpDescription': state.pickUpDescription,
+        'destinationDescription': state.destinationDescription,
+      });
+    }
   }
 
   Future<void> _onSubmit() async {

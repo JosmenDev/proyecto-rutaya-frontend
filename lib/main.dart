@@ -9,7 +9,7 @@ import 'package:indriver_clone_flutter/src/presentation/pages/client/Finalizatio
 import 'package:indriver_clone_flutter/src/presentation/pages/client/home/ClientHomePage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapBookingInfo/ClientMapBookingInfoPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/MapTripPage.dart';
-import 'package:indriver_clone_flutter/src/presentation/pages/client/routes-suggested/RoutesPage.dart';
+import 'package:indriver_clone_flutter/src/presentation/pages/client/routesSuggested/RoutesPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/tripHistory/TripHistoryPage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/profile/update/ProfileUpdatePage.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/splash/splash_screen.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:indriver_clone_flutter/src/domain/models/ClientRequest.dart';
-import 'package:indriver_clone_flutter/src/domain/models/TimeAndDistanceValues.dart';
 import 'package:indriver_clone_flutter/src/presentation/colors/colors.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/Bloc/MapTripBloc.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/Bloc/MapTripEvent.dart';
@@ -10,12 +9,11 @@ import 'package:indriver_clone_flutter/src/presentation/pages/client/mapTrip/Blo
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultButton.dart';
 
 class MapTripContent extends StatelessWidget {
-  MapTripState state;
-  TimeAndDistanceValues? timeAndDistanceValues;
-  // final ClientMapBookingInfoBloc bloc;
-  ClientRequest? clientRequest;
+  final MapTripState state;
+  final ClientRequest? clientRequest;
+  final String formattedTime; // Tiempo formateado (MM:ss)
 
-  MapTripContent(this.state, this.clientRequest, this.timeAndDistanceValues);
+  MapTripContent(this.state, this.clientRequest, this.formattedTime);
 
   @override
   Widget build(BuildContext context) {
@@ -26,21 +24,13 @@ class MapTripContent extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           child: _cardBookingInfo(context),
         ),
-        // Positioned(
-        //   top: 40,
-        //   left: 20,
-        //   child: DefaultIconBack(
-        //     color: Colors.white,
-        //   ),
-        // ),
       ],
     );
   }
 
   Widget _GoogleMaps(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height *
-          0.55, // Ajustar altura para dejar más espacio
+      height: MediaQuery.of(context).size.height * 0.55,
       child: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: state.cameraPosition,
@@ -49,27 +39,6 @@ class MapTripContent extends StatelessWidget {
         onMapCreated: (GoogleMapController controller) {
           if (!state.controller!.isCompleted) {
             state.controller?.complete(controller);
-            // context
-            //     .read<MapTripBloc>()
-            //     .add(GetClientRequest(idClientRequest: clientRequest!.id!));
-            // if (clientRequest != null) {
-            //   context.read<MapTripBloc>().add(AddMarketPickup(
-            //         lat: clientRequest!.pickupLat,
-            //         lng: clientRequest!.pickupLng,
-            //       ));
-            //   context.read<MapTripBloc>().add(AddMarketStopPickup(
-            //         lat: clientRequest!.pickupStopLat!,
-            //         lng: clientRequest!.pickupStopLng!,
-            //       ));
-            //   context.read<MapTripBloc>().add(AddMarketStopDestination(
-            //         lat: clientRequest!.destinationStopLat!,
-            //         lng: clientRequest!.destinationStopLng!,
-            //       ));
-            //   context.read<MapTripBloc>().add(AddMarketDestination(
-            //         lat: clientRequest!.destinationLat,
-            //         lng: clientRequest!.destinationLng,
-            //       ));
-            // }
           }
         },
       ),
@@ -79,8 +48,7 @@ class MapTripContent extends StatelessWidget {
   Widget _cardBookingInfo(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
-      height: MediaQuery.of(context).size.height *
-          0.48, // Ajustar altura para dejar espacio
+      height: MediaQuery.of(context).size.height * 0.48,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -89,7 +57,6 @@ class MapTripContent extends StatelessWidget {
         ),
       ),
       child: SingleChildScrollView(
-        // Envolver con SingleChildScrollView
         child: Column(
           children: [
             ListTile(
@@ -141,7 +108,7 @@ class MapTripContent extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                '${timeAndDistanceValues?.duration.text}',
+                '${clientRequest?.timeRoute} minutos',
                 style: TextStyle(
                   fontSize: 13,
                 ),
@@ -156,7 +123,7 @@ class MapTripContent extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                '${clientRequest?.distanceRoute}',
+                '${clientRequest?.distanceRoute} metros',
                 style: TextStyle(
                   fontSize: 13,
                 ),
@@ -181,11 +148,19 @@ class MapTripContent extends StatelessWidget {
             Defaultbutton(
               size: MediaQuery.of(context).size,
               onPressed: () {
+                // Detener el temporizador antes de navegar
                 context.read<MapTripBloc>().add(UpdateStatusToFinished(
                     idClientRequest: clientRequest!.id!));
+
                 Navigator.pushNamedAndRemoveUntil(
-                    context, 'client/finalization-trip', (route) => false,
-                    arguments: clientRequest);
+                  context,
+                  'client/finalization-trip',
+                  (route) => false,
+                  arguments: {
+                    'clientRequest': clientRequest,
+                    'duration': formattedTime // Pasar el tiempo formateado
+                  },
+                );
               },
               color: celeste,
               direction: 'Submit',

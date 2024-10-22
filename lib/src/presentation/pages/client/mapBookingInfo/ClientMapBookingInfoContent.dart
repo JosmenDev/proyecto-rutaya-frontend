@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:indriver_clone_flutter/src/domain/models/TimeAndDistanceValues.dart';
 import 'package:indriver_clone_flutter/src/presentation/colors/colors.dart';
@@ -48,6 +49,10 @@ class ClientMapBookingInfoContent extends StatelessWidget {
         onMapCreated: (GoogleMapController controller) {
           if (!state.controller.isCompleted) {
             state.controller.complete(controller);
+            context.read<ClientMapBookingInfoBloc>().add(
+                ChangeMapCameraPosition(
+                    lat: state.pickUpLatLng!.latitude,
+                    lng: state.pickUpLatLng!.longitude));
           }
         },
       ),

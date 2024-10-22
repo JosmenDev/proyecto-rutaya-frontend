@@ -59,7 +59,7 @@ Widget _cardUserInfo(
   return Container(
     margin: EdgeInsets.only(left: 20, right: 20, top: 100),
     width: size.width,
-    height: size.height * 0.37,
+    height: size.height * 0.40,
     child: Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,

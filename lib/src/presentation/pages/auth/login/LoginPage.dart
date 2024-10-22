@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indriver_clone_flutter/src/domain/models/AuthResponse.dart';
 import 'package:indriver_clone_flutter/src/domain/utils/Resource.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/LoginContent.dart';
@@ -26,11 +25,15 @@ class _LoginPageState extends State<LoginPage> {
         listener: (context, state) {
           final response = state.response;
           if (response is ErrorData) {
-            Fluttertoast.showToast(
-                msg: response.message, toastLength: Toast.LENGTH_SHORT);
-            print('Error Data: ${response.message}');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Password incorrecto.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+            // print('Error Data: ${response.message}');
           } else if (response is Success) {
-            print('Succes Dta: ${response.data}');
+            // print('Succes Dta: ${response.data}');
             final authResponse = response.data as AuthResponse;
             context
                 .read<LoginBloc>()

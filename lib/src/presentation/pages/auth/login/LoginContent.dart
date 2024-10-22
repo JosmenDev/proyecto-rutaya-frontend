@@ -7,7 +7,6 @@ import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/Lo
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginEvent.dart';
 import 'package:indriver_clone_flutter/src/presentation/pages/auth/login/bloc/LoginState.dart';
 import 'package:indriver_clone_flutter/src/presentation/utils/blocFormItem.dart';
-import 'package:indriver_clone_flutter/src/presentation/widgets/Backbutton.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultButton.dart';
 import 'package:indriver_clone_flutter/src/presentation/widgets/DefaultInput.dart';
 
@@ -44,15 +43,15 @@ class LoginContent extends StatelessWidget {
                     Container(
                       width: double.infinity,
                       height:
-                          300, // Asegúrate que la altura sea la misma que la imagen
+                          280, // Asegúrate que la altura sea la misma que la imagen
                       color: celeste
                           .withOpacity(0.54), // Color celeste con opacidad
                     ),
-                    Positioned(
-                        top: size.height *
-                            0.05, // Ajusta el botón según el tamaño de la pantalla
-                        left: 16.0,
-                        child: Backbutton(color: Colors.white)),
+                    // Positioned(
+                    //     top: size.height *
+                    //         0.05, // Ajusta el botón según el tamaño de la pantalla
+                    //     left: 16.0,
+                    //     child: Backbutton(color: Colors.white)),
                   ],
                 ),
                 Transform.translate(
@@ -119,6 +118,7 @@ class LoginContent extends StatelessWidget {
                             type: TextInputType.text,
                             obscureText: true,
                           ),
+                          SizedBox(height: size.height * 0.02),
                           Defaultbutton(
                               size: size,
                               onPressed: () {
