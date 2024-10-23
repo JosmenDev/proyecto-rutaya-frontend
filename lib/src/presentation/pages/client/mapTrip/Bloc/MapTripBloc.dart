@@ -142,8 +142,8 @@ class MapTripBloc extends Bloc<MapTripEvent, MapTripState> {
           lng: data.destinationStopLng!,
         ));
         add(AddMarketDestination(
-          lat: data.destinationLat,
-          lng: data.destinationLng,
+          lat: data.destinationLat!,
+          lng: data.destinationLng!,
         ));
       }
     });
@@ -265,8 +265,8 @@ class MapTripBloc extends Bloc<MapTripEvent, MapTripState> {
         idPolyline: "Ruta 3",
         originLat: state.clientRequestResponse!.destinationStopLat!,
         originLng: state.clientRequestResponse!.destinationStopLng!,
-        destinationLat: state.clientRequestResponse!.destinationLat,
-        destinationLng: state.clientRequestResponse!.destinationLng,
+        destinationLat: state.clientRequestResponse!.destinationLat!,
+        destinationLng: state.clientRequestResponse!.destinationLng!,
       ));
       emit(state.copyWith(
         position: position,

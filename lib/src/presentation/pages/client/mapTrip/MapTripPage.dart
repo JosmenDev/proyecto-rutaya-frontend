@@ -24,10 +24,11 @@ class _MapTripPageState extends State<MapTripPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (idClientRequest != null) {
         print('ID CLIENT REQUEST $idClientRequest');
         context.read<MapTripBloc>().add(MapTripInitEvent());
+        await Future.delayed(Duration(seconds: 3));
         context.read<MapTripBloc>().add(
             GetClientRequest(idClientRequest: int.parse(idClientRequest!)));
       }

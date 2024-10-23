@@ -11,10 +11,10 @@ class ClientRequest {
   int idClient;
   String pickupDescription;
   String destinationDescription;
-  double pickupLat;
-  double pickupLng;
-  double destinationLat;
-  double destinationLng;
+  double? pickupLat;
+  double? pickupLng;
+  double? destinationLat;
+  double? destinationLng;
   String? agencyLongName;
   double? pickupStopLat;
   double? pickupStopLng;
@@ -32,10 +32,10 @@ class ClientRequest {
     required this.idClient,
     required this.pickupDescription,
     required this.destinationDescription,
-    required this.pickupLat,
-    required this.pickupLng,
-    required this.destinationLat,
-    required this.destinationLng,
+    this.pickupLat,
+    this.pickupLng,
+    this.destinationLat,
+    this.destinationLng,
     this.agencyLongName,
     this.pickupStopLat,
     this.pickupStopLng,
