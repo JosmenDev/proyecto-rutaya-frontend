@@ -11,7 +11,7 @@ class AuthService {
   // Future permite trabajar con peticiones asincronas
   Future<Resource<AuthResponse>> login(String email, String password) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_PROJECT, '/auth/login');
+      Uri url = Uri.https(ApiConfig.API_PROJECT, '/auth/login');
       Map<String, String> headers = {'Content-Type': 'application/json'};
       String body = json.encode({'email': email, 'password': password});
       final response = await http.post(url, headers: headers, body: body);
@@ -35,7 +35,7 @@ class AuthService {
 
   Future<Resource<AuthResponse>> register(User user) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_PROJECT, '/auth/register');
+      Uri url = Uri.https(ApiConfig.API_PROJECT, '/auth/register');
       Map<String, String> headers = {'Content-Type': 'application/json'};
       String body = json.encode(user);
       final response = await http.post(url, headers: headers, body: body);

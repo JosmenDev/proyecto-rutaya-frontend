@@ -19,7 +19,7 @@ class MapTripPage extends StatefulWidget {
 class _MapTripPageState extends State<MapTripPage> {
   String? idClientRequest;
   Timer? _timer;
-  int _secondsElapsed = 0; // Variable para contar los segundos
+  int _secondsElapsed = 3; // Variable para contar los segundos
 
   @override
   void initState() {
@@ -108,7 +108,7 @@ class _MapTripPageState extends State<MapTripPage> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    'El mapa tardó en cargar, regresa y vuelve a intentarlo',
+                    'Preparando mapa',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,

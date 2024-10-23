@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 class ClientRequestService {
   Future<Resource<int>> create(ClientRequest clientRequest) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_PROJECT, 'client-requests');
+      Uri url = Uri.https(ApiConfig.API_PROJECT, 'client-requests');
       Map<String, String> headers = {'Content-Type': 'application/json'};
       String body = json.encode(clientRequest);
       final response = await http.post(url, headers: headers, body: body);
@@ -40,7 +40,7 @@ class ClientRequestService {
       int timeRoute,
       double tarifaRoute) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_PROJECT, 'client-requests');
+      Uri url = Uri.https(ApiConfig.API_PROJECT, 'client-requests');
       Map<String, String> headers = {'Content-Type': 'application/json'};
       String body = json.encode({
         'id': idClientRequest,
@@ -75,7 +75,7 @@ class ClientRequestService {
     double destinationLng,
   ) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_PROJECT,
+      Uri url = Uri.https(ApiConfig.API_PROJECT,
           'client-requests/${originLat}/${originLng}/${destinationLat}/${destinationLng}');
       Map<String, String> headers = {'Content-Type': 'application/json'};
       final response = await http.get(url, headers: headers);
@@ -96,8 +96,8 @@ class ClientRequestService {
   Future<Resource<ClientRequest>> getByClientRequest(
       int idClientRequest) async {
     try {
-      Uri url =
-          Uri.http(ApiConfig.API_PROJECT, 'client-requests/${idClientRequest}');
+      Uri url = Uri.https(
+          ApiConfig.API_PROJECT, 'client-requests/${idClientRequest}');
       Map<String, String> headers = {'Content-Type': 'application/json'};
       final response = await http.get(url, headers: headers);
       final data = json.decode(response.body);
@@ -116,8 +116,8 @@ class ClientRequestService {
   Future<Resource<List<ClientRequest>>> getByClientTripsHistory(
       int idClient) async {
     try {
-      Uri url =
-          Uri.http(ApiConfig.API_PROJECT, 'client-requests/client/${idClient}');
+      Uri url = Uri.https(
+          ApiConfig.API_PROJECT, 'client-requests/client/${idClient}');
       Map<String, String> headers = {'Content-Type': 'application/json'};
       final response = await http.get(url, headers: headers);
       final data = json.decode(response.body);
@@ -139,7 +139,7 @@ class ClientRequestService {
   ) async {
     try {
       Uri url =
-          Uri.http(ApiConfig.API_PROJECT, 'client-requests/update_status');
+          Uri.https(ApiConfig.API_PROJECT, 'client-requests/update_status');
       Map<String, String> headers = {'Content-Type': 'application/json'};
       String body = json.encode({
         'id_client_request': idClientRequest,

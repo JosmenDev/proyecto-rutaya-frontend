@@ -15,7 +15,7 @@ class UsersService {
 
   Future<Resource<User>> update(int id, User user) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_PROJECT, 'users/$id');
+      Uri url = Uri.https(ApiConfig.API_PROJECT, '/users/$id');
       Map<String, String> headers = {
         'Content-Type': 'application/json',
         'Authorization':
@@ -42,7 +42,7 @@ class UsersService {
   // Mueve updateImage dentro de la clase para acceder a la propiedad `token`
   Future<Resource<User>> updateImage(int id, User user, File file) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_PROJECT, 'users/upload/$id');
+      Uri url = Uri.https(ApiConfig.API_PROJECT, '/users/upload/$id');
       final request = http.MultipartRequest('PUT', url);
 
       request.headers['Authorization'] = 'Bearer ${await token}';

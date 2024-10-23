@@ -166,6 +166,7 @@ class MapTripContent extends StatelessWidget {
               direction: 'Submit',
               text: 'Finalizar Viaje',
             ),
+            SizedBox(height: 8.0),
           ],
         ),
       ),
